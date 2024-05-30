@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
-
+import axios from 'axios'
 
 const Wrapper = styled.div`
   position: relative;
@@ -13,7 +13,7 @@ const BoxContainer = styled.div`
 border: 1px solid #ccc;
   padding: 20px;
   margin-bottom: 20px;
-  width: 100%;
+  width: 1050px;
   box-sizing: border-box;
   height: 100vh;
 
@@ -126,6 +126,27 @@ const TableWrapper = styled.div`
 `;
 
 export default function Brands() {
+
+  const [getData,setGetData]=useState([])
+  useEffect(()=>{
+ getStaffDetails();
+  },[])
+
+const getStaffDetails=()=>{
+  axios.get('https://wyg18dkjf3.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-brands', {
+    params: {
+      brand_id:1
+    }
+  })
+  .then(function (response) {
+    // console.log(response.data);
+    setGetData(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
   const [employees, setEmployees] = useState([
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
@@ -146,11 +167,7 @@ export default function Brands() {
   };
 
   const columns = [
-    {
-      name: 'Brand ID',
-      selector: row => row.brandid,
-      sortable:true
-    },
+    
     {
       name: 'Brand Name',
       selector: row => row.brandname,
@@ -178,7 +195,7 @@ export default function Brands() {
       },
       {
         name: 'Social Media',
-        selector: row => row.socailmedia,
+        selector: row => row.socialmedia.facebook,
         sortable:true
       },
       {
@@ -188,30 +205,7 @@ export default function Brands() {
       },
   ];
 
-  const data = [
-      {
-        id: 1,
-        brandid: '1',
-    brandname:'Furniture',
-    address:'Kota',
-    email:'14@gmail.com',
-    phone:'000000000',
-    website:'pilotji.in',
-    socailmedia:'@pilotji',
-    description:'Vacant for all'
-    },
-    {
-      id: 2,
-      brandid: '2',
-  brandname:'Ferrari',
-  address:'andheri',
-  email:'34@gmail.com',
-  phone:'000000000',
-  website:'pilotji.in',
-  socailmedia:'@pilotji',
-  description:'Vacant for all'
-  },
-]
+ 
   
 return (
 <div>
@@ -221,7 +215,7 @@ return (
       <TableWrapper>
     <DataTable
       columns={columns}
-      data={data}
+      data={getData}
      pagination
   />
   </TableWrapper>

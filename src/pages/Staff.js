@@ -125,51 +125,37 @@ const TableWrapper = styled.div`
 
 export default function Staff() {
   const [getData,setGetData]=useState([])
-  const [name,setName]=useState('')
   useEffect(()=>{
  getStaffDetails();
   },[])
 
 const getStaffDetails=()=>{
-  axios.get('https://ok1gem39nc.execute-api.ap-south-1.amazonaws.com/default/lambda-getOccupiedVacantTable', {
+  axios.get('https://d3ck7r5e72.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-staff', {
     params: {
       branch_id:1
     }
   })
   .then(function (response) {
-    console.log(response.data);
-    setGetData(response.data)
-    setName(response.data.name)
+    // console.log(response.data);
+    setGetData(response.data);
   })
   .catch(function (error) {
     console.log(error);
   });
 }
 
-    const [employees, setEmployees] = useState([
-        { id: 1, name: 'John Doe' },
-        { id: 2, name: 'Jane Smith' },
-      ]);
-      const [newEmployeeName, setNewEmployeeName] = useState('');
+   
+
       const [showPopup, setShowPopup] = useState(false);
     
       const handleAddEmployee = () => {
-        if (newEmployeeName.trim() !== '') {
-          const newEmployee = {
-            id: employees.length + 1,
-            name: newEmployeeName,
-          };
-          setEmployees([...employees, newEmployee]);
-          setNewEmployeeName('');
-          setShowPopup(false); // Close the popup after adding employee
-        }
+       console.log("hello");
       };
-      console.log('setting',name);
-    
+     
       const columns = [
         {
           name: 'Name',
-          selector: row => row.name,
+          selector: row => row.staffname,
           sortable:true
         },
         {
@@ -184,29 +170,12 @@ const getStaffDetails=()=>{
         },
         {
           name: 'Hourly Wages',
-          selector: row => row.Wages,
+          selector: row => row.hourlywage,
           sortable:true
         },
       ];
     
-      const data = [
-          {
-            id: 1,
-            firstname: 'Beetlejuice',
-        lastname:'Yadav',
-        department:'Housing',
-        role:'Cleaner',
-        Wages:'2000',
-        },
-        {
-            id: 2,
-            firstname: 'Aamir',
-        lastname:'Khan',
-        department:'Developer',
-        role:'React Native',
-        Wages:'3000',
-        },
-    ]
+    
       
   return (
     <div>
@@ -215,7 +184,6 @@ const getStaffDetails=()=>{
         <EmployeeList>
           <TableWrapper>
         <DataTable
-          title="Employee List"
           columns={columns}
           data={getData}
     pagination
@@ -234,8 +202,7 @@ const getStaffDetails=()=>{
             <FormControl
               type="text"
               placeholder="eg:-Mohit"
-              value={newEmployeeName}
-              onChange={(e) => setNewEmployeeName(e.target.value)}
+             
             />
           </FormGroup>
           <FormGroup>

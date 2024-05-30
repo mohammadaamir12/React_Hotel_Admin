@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import DataTable from 'react-data-table-component';
 
 const Wrapper = styled.div`
@@ -123,6 +124,25 @@ const TableWrapper = styled.div`
 `;
 
 export default function Promotions() {
+   const [getData,setGetData]=useState([])
+  useEffect(()=>{
+ getStaffDetails();
+  },[])
+
+const getStaffDetails=()=>{
+  axios.get('https://o3dk3tsb6j.execute-api.ap-south-1.amazonaws.com/default/lambda-get-promotions', {
+    params: {
+      branch_id:1
+    }
+  })
+  .then(function (response) {
+    // console.log(response.data);
+    setGetData(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
   const [employees, setEmployees] = useState([
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
@@ -155,7 +175,9 @@ export default function Promotions() {
     },
     {
       name: 'Applicable Items',
-      selector: row => row.applicable,
+      selector: row => Object.entries(row.applicableitems)
+      .map(([key, values]) => `Category ${key}: ${values.join(', ')}`)
+      .join('; '),
       sortable:true
     },
     {
@@ -166,24 +188,7 @@ export default function Promotions() {
    
   ];
 
-  const data = [
-      {
-        id: 1,
-        name: 'New',
-    type:'new',
-    applicable:'Food',
-    discountamount:'14',
-    
-    },
-    {
-      id: 2,
-      name: 'old',
-  type:'old',
-  applicable:'drink',
-  discountamount:'48',
-  
-  },
-]
+ 
   
 return (
 <div>
@@ -193,7 +198,7 @@ return (
       <TableWrapper>
     <DataTable
       columns={columns}
-      data={data}
+      data={getData}
      pagination
   />
   </TableWrapper>

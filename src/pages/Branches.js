@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
+import axios from 'axios'
 
 const Wrapper = styled.div`
   position: relative;
@@ -12,7 +13,7 @@ const BoxContainer = styled.div`
 border: 1px solid #ccc;
   padding: 20px;
   margin-bottom: 20px;
-  width: 100%;
+  width: 1050px;
   box-sizing: border-box;
   height: 100vh;
 
@@ -123,6 +124,25 @@ const TableWrapper = styled.div`
 `;
 
 export default function Branches() {
+  const [getData,setGetData]=useState([])
+  useEffect(()=>{
+ getStaffDetails();
+  },[])
+
+const getStaffDetails=()=>{
+  axios.get('https://5z91cttyj8.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-branches', {
+    params: {
+      branch_id:1
+    }
+  })
+  .then(function (response) {
+    // console.log(response.data);
+    setGetData(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
   const [employees, setEmployees] = useState([
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
@@ -143,21 +163,21 @@ export default function Branches() {
   };
 
   const columns = [
-    // {
-    //   name: 'Branch Name',
-    //   selector: row => row.name,
-    //   sortable:true
-    // },
-    // {
-    //   name: 'Address',
-    //   selector: row => row.address,
-    //   sortable:true
-    // },
-    // {
-    //   name: 'State Province',
-    //   selector: row => row.state_province,
-    //   sortable:true
-    // },
+    {
+      name: 'Branch Name',
+      selector: row => row.branchname,
+      sortable:true
+    },
+    {
+      name: 'Address',
+      selector: row => row.address,
+      sortable:true
+    },
+    {
+      name: 'State Province',
+      selector: row => row.state_province,
+      sortable:true
+    },
     {
       name: 'Country',
       selector: row => row.country,
@@ -180,85 +200,48 @@ export default function Branches() {
       },
       {
         name: 'Licence Number',
-        selector: row => row.licencenumber,
+        selector: row => row.licensenumber.GSTN,
         sortable:true
       },
-      // {
-      //   name: 'Liquir Licence',
-      //   selector: row => row.liquirlicence,
-      //   sortable:true
-      // },
+      {
+        name: 'Liquir Licence',
+        selector: row => row.liquorlicense,
+        sortable:true
+      },
       {
         name: 'Operating Hours',
-        selector: row => row.operatinghour,
+        selector: row => row.operatinghours,
         sortable:true
       },
-      // {
-      //   name: 'Delivery Options',
-      //   selector: row => row.deliveryoption,
-      //   sortable:true
-      // },
-      // {
-      //   name: 'Reservations',
-      //   selector: row => row.reservations,
-      //   sortable:true
-      // },
-      // {
-      //   name: 'Payment Options',
-      //   selector: row => row.paymentOption,
-      //   sortable:true
-      // },
-      // {
-      //   name: 'Description',
-      //   selector: row => row.description,
-      //   sortable:true
-      // },
+      {
+        name: 'Delivery Options',
+        selector: row => row.deliveryoptions,
+        sortable:true
+      },
+      {
+        name: 'Reservations',
+        selector: row => row.reservationpolicy,
+        sortable:true
+      },
+      {
+        name: 'Payment Options',
+        selector: row => row.paymentoptions,
+        sortable:true
+      },
+      {
+        name: 'Description',
+        selector: row => row.description,
+        sortable:true
+      },
       {
         name: 'Status',
-        selector: row => row.status,
+        selector: row => row.status ? 'True' : 'False',
         sortable:true
       },
     
   ];
 
-  const data = [
-      {
-        id: 1,
-        deliveryoption: 'visited',
-    operatinghour:'12',
-    liquirlicence:'yes',
-    licencenumber:'14465576767',
-    reservations:'done',
-    paymentOption:'card',
-    description:'Good for their work',
-    status:'Vacant',
-    propertytype:'rent',
-    phone:'000000000',
-    email:'a@gmail.com',
-    country:'China',
-    state_province:'hong',
-    address:'China Town',
-    name:'Hello'
-    },
-    {
-      id: 2,
-      deliveryoption: 'visited',
-  operatinghour:'24',
-  liquirlicence:'yes',
-  licencenumber:'00000076767',
-  reservations:'done',
-  paymentOption:'cash',
-  description:'Good for their staff',
-  status:'Booked',
-  propertytype:'rent',
-  phone:'000000000',
-  email:'y@gmail.com',
-  country:'India',
-  state_province:'Up',
-  address:'Shaharanpur',
-  name:'Hello2'
-  },
-]
+ 
   
 return (
 
@@ -269,7 +252,7 @@ return (
       <TableWrapper>
     <DataTable
       columns={columns}
-      data={data}
+      data={getData}
      pagination
   />
   </TableWrapper>

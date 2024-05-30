@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
+import axios from 'axios';
 
 const Wrapper = styled.div`
   position: relative;
@@ -14,7 +15,9 @@ border: 1px solid #ccc;
   margin-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
-  height: 100vh;
+  height: 80vh;
+  overflow-x: auto;
+  overflow-y: auto;
 
   @media (max-width: 768px) {
     overflow-x: auto;
@@ -125,6 +128,26 @@ const TableWrapper = styled.div`
 `;
 
 export default function Taxes() {
+  const [getData,setGetData]=useState([])
+  useEffect(()=>{
+ getStaffDetails();
+  },[])
+
+const getStaffDetails=()=>{
+  axios.get('https://zbtz7c64wj.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-taxes', {
+    params: {
+      country:"INDIA"
+    }
+  })
+  .then(function (response) {
+    // console.log(response.data);
+    setGetData(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
   const [employees, setEmployees] = useState([
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
@@ -152,7 +175,7 @@ export default function Taxes() {
     },
     {
       name: 'Item Category',
-      selector: row => row.itemCategory,
+      selector: row => row.itemcategory,
       sortable:true
     },
     {
@@ -167,7 +190,7 @@ export default function Taxes() {
     },
     {
       name: 'State Province',
-      selector: row => row.stateprvince,
+      selector: row => row.state_province,
       sortable:true
     },
     {
@@ -182,28 +205,7 @@ export default function Taxes() {
       },
   ];
 
-  const data = [
-      {
-        id: 1,
-    taxname:'IGST',
-    itemCategory:'food',
-    industrytype:'new',
-    country:'India',
-    stateprvince:'UP',
-    percentage:'18',
-    description:'Vacant for you'
-    },
-    {
-      id: 2,
-  taxname:'CGST',
-  itemCategory:'food',
-  industrytype:'new',
-  country:'India',
-  stateprvince:'UP',
-  percentage:'18',
-  description:'Vacant for you'
-  },
-]
+  
   
 return (
 <div>
@@ -213,7 +215,7 @@ return (
       <TableWrapper>
     <DataTable
       columns={columns}
-      data={data}
+      data={getData}
      pagination
   />
   </TableWrapper>

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import DataTable from 'react-data-table-component';
 
 
@@ -125,7 +126,25 @@ const TableWrapper = styled.div`
 
 
 export default function MenuCategory() {
+  const [getData,setGetData]=useState([])
+  useEffect(()=>{
+ getStaffDetails();
+  },[])
 
+const getStaffDetails=()=>{
+  axios.get('https://nes8zw0dfh.execute-api.ap-south-1.amazonaws.com/default/lambda-get-manuCategory', {
+    params: {
+      branch_id:1
+    }
+  })
+  .then(function (response) {
+    // console.log(response.data);
+    setGetData(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
     const [employees, setEmployees] = useState([
         { id: 1, name: 'John Doe' },
         { id: 2, name: 'Jane Smith' },
@@ -148,7 +167,7 @@ export default function MenuCategory() {
       const columns = [
         {
           name: 'Category ID',
-          selector: row => row.categoryid,
+          selector: row => row.categories.categoryid,
           sortable:true
         },
         {
@@ -164,22 +183,7 @@ export default function MenuCategory() {
        
       ];
     
-      const data = [
-          {
-            id: 1,
-            categoryid: '21',
-        menuid:'2',
-        category:'Drink',
-       
-        },
-        {
-            id: 2,
-            categoryid: '10',
-        menuid:'25',
-        category:'Food',
-       
-        },
-    ]
+    
    
     return (
 
@@ -190,7 +194,7 @@ export default function MenuCategory() {
               <TableWrapper>
             <DataTable
               columns={columns}
-              data={data}
+              data={getData}
         pagination
           />
           </TableWrapper>

@@ -53,7 +53,7 @@ function App() {
       <Sidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode}/>
       )}
        <Frame>
-        <Navbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} />
+        <Navbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} setAuth={setIsAuth} />
    <Routes>
    <Route path='/login' exact element={<Login/>} />
     <Route path='/' exact element={isAuth ? <DashBoard /> : <Navigate to="/login" />}/>

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
+import axios from 'axios'
 
 const Wrapper = styled.div`
   position: relative;
@@ -14,7 +15,9 @@ border: 1px solid #ccc;
   margin-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
-  height: 100vh;
+  height: 80vh;
+  overflow-x:auto;
+  overflow-x:auto;
 
   @media (max-width: 768px) {
     overflow-x: auto;
@@ -126,6 +129,25 @@ const TableWrapper = styled.div`
 
 
 export default function Tables() {
+  const [getData,setGetData]=useState([])
+  useEffect(()=>{
+ getStaffDetails();
+  },[])
+
+const getStaffDetails=()=>{
+  axios.get('https://t0mjhgttr7.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-tables', {
+    params: {
+      branch_id:1
+    }
+  })
+  .then(function (response) {
+    // console.log(response.data);
+    setGetData(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
     const [employees, setEmployees] = useState([
         { id: 1, name: 'John Doe' },
         { id: 2, name: 'Jane Smith' },
@@ -148,7 +170,7 @@ export default function Tables() {
       const columns = [
         {
           name: 'Table Catalog',
-          selector: row => row.tablecatalog,
+          selector: row => row.tableid,
           sortable:true
         },
         {
@@ -158,7 +180,7 @@ export default function Tables() {
         },
         {
           name: 'Table Number',
-          selector: row => row.tableNumber,
+          selector: row => row.tablenumber,
           sortable:true
         },
         {
@@ -183,35 +205,12 @@ export default function Tables() {
           },
           {
             name: 'Status',
-            selector: row => row.status,
+            selector: row => row.status ?'True' : 'False',
             sortable:true
           },
       ];
     
-      const data = [
-          {
-            id: 1,
-            tablecatalog: 'First',
-        tableName:'Furniture',
-        tabletype:'Family',
-        tableNumber:'14',
-        tableSchema:'New',
-        capacity:'10',
-        location:'Bottom left',
-        status:'Vacant'
-        },
-        {
-            id: 2,
-            tablecatalog: 'Second',
-        tableName:'table',
-        tabletype:'single',
-        tableNumber:'12',
-        tableSchema:'New',
-        capacity:'4',
-        location:'Corner left',
-        status:'Booked'
-        },
-    ]
+      
       
   return (
     <div>
@@ -221,7 +220,7 @@ export default function Tables() {
           <TableWrapper>
         <DataTable
           columns={columns}
-          data={data}
+          data={getData}
          pagination
       />
       </TableWrapper>

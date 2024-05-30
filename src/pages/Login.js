@@ -52,11 +52,13 @@ export default function Login({setAuth }) {
 
     const handleOtpSubmit = (e) => {
         e.preventDefault();
+        setLoading(true);
         console.log(userId);
         console.log(session);
         console.log(otp);
         if (otp != '') {
             axios.post(VALIDATEAPI, {
+              phone_number:number,
                 session: session,
                 challengeParameters: {
                     USERNAME:userId,
@@ -64,17 +66,19 @@ export default function Login({setAuth }) {
                 },
             },{mode:'cors'})
                 .then(function (response) {
+                  setLoading(false);
                     toast('Success')
                     const token = response.data.idToken;
                     localStorage.setItem('token', token);
                     console.log('successful:', response.data);
+                    
                     setAuth(true)
                     navigate('/')
                 })
                 .catch(function (error) {
                     console.error('error', error);
                     toast('Failed to verify')
-                    
+                    setLoading(false);
                 });
         }
     };
@@ -98,7 +102,7 @@ export default function Login({setAuth }) {
                 <div style={styles.formGroup}>
                   <label>OTP</label>
                   <input
-                    type="password"
+                    type="text"
                     style={styles.input}
                     placeholder="Enter otp here"
                     value={otp}

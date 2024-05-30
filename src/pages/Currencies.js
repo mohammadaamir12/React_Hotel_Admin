@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
+import axios from 'axios'
 
 
 const Wrapper = styled.div`
@@ -124,6 +125,26 @@ const TableWrapper = styled.div`
 `;
 
 export default function Currencies() {
+  const [getData,setGetData]=useState([])
+  useEffect(()=>{
+ getStaffDetails();
+  },[])
+
+const getStaffDetails=()=>{
+  axios.get('https://vcq5wzgur1.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-currencies', {
+    params: {
+      country:"INDIA"
+    }
+  })
+  .then(function (response) {
+    // console.log(response.data);
+    setGetData(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
   const [employees, setEmployees] = useState([
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
@@ -151,7 +172,7 @@ export default function Currencies() {
     },
     {
       name: 'Currency Name',
-      selector: row => row.cuurencyname,
+      selector: row => row.currencyname,
       sortable:true
     },
     {
@@ -161,29 +182,12 @@ export default function Currencies() {
     },
     {
       name: 'Currency Country',
-      selector: row => row.currencycountry,
+      selector: row => row.country,
       sortable:true
     },
   ];
 
-  const data = [
-      {
-        id: 1,
-        currencyid: '1',
-    cuurencyname:'dollar',
-    currencysymbol:'$',
-    currencycountry:'Europe',
-   
-    },
-    {
-      id: 2,
-      currencyid: '2',
-  cuurencyname:'Rupee',
-  currencysymbol:'Rs',
-  currencycountry:'India',
- 
-  },
-]
+  
   
 return (
 <div>
@@ -193,7 +197,7 @@ return (
       <TableWrapper>
     <DataTable
       columns={columns}
-      data={data}
+      data={getData}
      pagination
   />
   </TableWrapper>

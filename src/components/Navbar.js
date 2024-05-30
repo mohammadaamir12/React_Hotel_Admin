@@ -1,10 +1,11 @@
-import {Menu,MenuOpen,Search, LightMode, NotificationImportant, Message, DarkMode} from '@mui/icons-material';
+import {Menu,MenuOpen,Search, LightMode, NotificationImportant, Message, DarkMode, Logout} from '@mui/icons-material';
 
 import React from 'react'
 import styled from 'styled-components'
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import { IconButton ,Button} from '@mui/material';
+import { useNavigate } from "react-router-dom";
 
 
 const NavBarDiv=styled.div`
@@ -102,7 +103,14 @@ margin-right: 16px;
   }
 `;
 
-export default function Navbar({menuOpen,setMenuOpen,setDarkMode,darkMode}) {
+export default function Navbar({menuOpen,setMenuOpen,setDarkMode,darkMode,setAuth}) {
+  const navigate = useNavigate();
+  const setLogout=()=>{
+    localStorage.removeItem("activeLink")
+    localStorage.removeItem("token")
+    setAuth(false)
+    navigate('/login')
+  }
   return (
     <NavBarDiv>
         <IcoButton onClick={()=>setMenuOpen(!menuOpen)}>
@@ -131,8 +139,8 @@ export default function Navbar({menuOpen,setMenuOpen,setDarkMode,darkMode}) {
         <NotificationImportant />
           
         </CustomButton>
-        <CustomButton variant="contained" color="primary" >
-        <Message />
+        <CustomButton variant="contained" onClick={setLogout} color="primary" >
+        <Logout />
           
         </CustomButton>
       </Container>

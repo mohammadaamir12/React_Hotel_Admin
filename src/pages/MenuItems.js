@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 
@@ -123,6 +124,25 @@ const TableWrapper = styled.div`
 `;
 
 export default function MenuItems() {
+  const [getData,setGetData]=useState([])
+  useEffect(()=>{
+ getStaffDetails();
+  },[])
+
+const getStaffDetails=()=>{
+  axios.get('https://m3gr2x1eng.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-menuItems', {
+    params: {
+      branch_id:1
+    }
+  })
+  .then(function (response) {
+    // console.log(response.data);
+    setGetData(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
     const [employees, setEmployees] = useState([
         { id: 1, name: 'John Doe' },
         { id: 2, name: 'Jane Smith' },
@@ -166,24 +186,7 @@ export default function MenuItems() {
        
       ];
     
-      const data = [
-          {
-            id: 1,
-            name: 'Cold Drink',
-        price:'200',
-        description:'Cold and Chill',
-        availibility:'Yes'
-       
-        },
-        {
-            id: 2,
-            name: 'Apple Juice',
-        price:'300',
-        description:'Fresh Juice from Kashmir',
-        availibility:'Yes'
-       
-        },
-    ]
+   
   return (
     <div>
     <Wrapper blur={showPopup}>
@@ -193,7 +196,7 @@ export default function MenuItems() {
         <TableWrapper>
         <DataTable
           columns={columns}
-          data={data}
+          data={getData}
     pagination
       />
       </TableWrapper>

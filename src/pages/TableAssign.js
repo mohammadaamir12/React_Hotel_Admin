@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
+import axios from 'axios';
 
 const Wrapper = styled.div`
   position: relative;
@@ -123,6 +124,25 @@ const TableWrapper = styled.div`
 `;
 
 export default function TableAssign() {
+  const [getData,setGetData]=useState([])
+  useEffect(()=>{
+ getStaffDetails();
+  },[])
+
+const getStaffDetails=()=>{
+  axios.get('https://bb5csfacml.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-tables-assign', {
+    params: {
+      branch_id:1
+    }
+  })
+  .then(function (response) {
+    // console.log(response.data);
+    setGetData(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
   const [employees, setEmployees] = useState([
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
@@ -166,24 +186,6 @@ export default function TableAssign() {
    
   ];
 
-  const data = [
-      {
-        id: 1,
-        tableid: '1',
-    staffid:'2',
-    assigntime:'20 hour',
-    status:'Going On',
-   
-    },
-    {
-      id: 2,
-      tableid: '2',
-  staffid:'5',
-  assigntime:'16 minutes',
-  status:'Served',
- 
-  },
-]
   
 return (
 <div>
@@ -193,7 +195,7 @@ return (
       <TableWrapper>
     <DataTable
       columns={columns}
-      data={data}
+      data={getData}
      pagination
   />
   </TableWrapper>
