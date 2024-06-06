@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios'
+import MUIDataTable from 'mui-datatables';
 
 const Wrapper = styled.div`
   position: relative;
@@ -164,83 +165,131 @@ const getStaffDetails=()=>{
 
   const columns = [
     {
-      name: 'Branch Name',
-      selector: row => row.branchname,
-      sortable:true
+      name: 'branchname',
+      label: "Branch Name",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-      name: 'Address',
-      selector: row => row.address,
-      sortable:true
+      name: 'address',
+      label: "Branch Address",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-      name: 'State Province',
-      selector: row => row.state_province,
-      sortable:true
+      name: 'state_province',
+      label: "State Province",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-      name: 'Country',
-      selector: row => row.country,
-      sortable:true
+      name: 'country',
+      label: "Country",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-      name: 'Email',
-      selector: row => row.email,
-      sortable:true
+      name: 'email',
+      label: "State Province",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-        name: 'Phone',
-        selector: row => row.phone,
-        sortable:true
+        name: 'phone',
+        label: "State Province",
+      options: {
+        filter: true,
+        sort: true,
+      }
       },
       {
-        name: 'Property Type',
-        selector: row => row.propertytype,
-        sortable:true
+        name: 'propertytype',
+        label: "State Province",
+      options: {
+        filter: true,
+        sort: true,
+      }
       },
       {
-        name: 'Licence Number',
-        selector: row => row.licensenumber.GSTN,
-        sortable:true
+        name: '',
+        label: "License Number",
+      options: {
+        filter: true,
+        sort: true,
+      }
       },
       {
-        name: 'Liquir Licence',
-        selector: row => row.liquorlicense,
-        sortable:true
+        name: 'liquorlicense',
+        label: "Liquir Licence",
+        options: {
+          filter: true,
+          sort: true,
+        }
       },
       {
-        name: 'Operating Hours',
-        selector: row => row.operatinghours,
-        sortable:true
+        name: 'operatinghours',
+        label: "Operating Hours",
+      options: {
+        filter: true,
+        sort: true,
+      }
       },
       {
-        name: 'Delivery Options',
-        selector: row => row.deliveryoptions,
-        sortable:true
+        name: 'deliveryoptions',
+        label: "Delivery Options",
+        options: {
+          filter: true,
+          sort: true,
+        }
       },
       {
-        name: 'Reservations',
-        selector: row => row.reservationpolicy,
-        sortable:true
+        name: 'reservationpolicy',
+        label: "Reservations",
+      options: {
+        filter: true,
+        sort: true,
+      }
       },
       {
-        name: 'Payment Options',
-        selector: row => row.paymentoptions,
-        sortable:true
+        name: 'paymentoptions',
+        label: "Payment Options",
+      options: {
+        filter: true,
+        sort: true,
+      }
       },
       {
-        name: 'Description',
-        selector: row => row.description,
-        sortable:true
+        name: 'description',
+        label: "Description",
+        options: {
+          filter: true,
+          sort: true,
+        }
       },
       {
-        name: 'Status',
-        selector: row => row.status ? 'True' : 'False',
-        sortable:true
+        name: 'status',
+        label: "Status",
+      options: {
+        filter: true,
+        sort: true,
+      }
       },
     
   ];
-
+  const options = {
+    filterType: 'checkbox',
+    selectableRows:false,
+  };
  
   
 return (
@@ -250,10 +299,10 @@ return (
   <BoxContainer>
     <EmployeeList>
       <TableWrapper>
-    <DataTable
+    <MUIDataTable
       columns={columns}
       data={getData}
-     pagination
+     options={options}
   />
   </TableWrapper>
     </EmployeeList>

@@ -2,6 +2,8 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
+import MUIDataTable from 'mui-datatables';
+
 
 const Wrapper = styled.div`
   position: relative;
@@ -163,29 +165,64 @@ const getStaffDetails=()=>{
   };
 
   const columns = [
+   
     {
-      name: 'Table ID',
-      selector: row => row.tableid,
-      sortable:true
+      name: 'staffid',
+      label: "Staff ID",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    
+    {
+      name: 'tables',
+      label: "Table ID",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) => (
+          <ul>
+            {value.map(category => (
+              <li key={category.id}>{category.id}</li>
+            ))}
+          </ul>
+        )
+      }
     },
     {
-      name: 'Staff ID',
-      selector: row => row.staffid,
-      sortable:true
+      name: 'tables',
+      label: "Table Number",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) => (
+          <ul>
+            {value.map(category => (
+              <li key={category.table_number}>{category.table_number}</li>
+            ))}
+          </ul>
+        )
+      }
     },
+    
     {
-      name: 'Assign Time',
-      selector: row => row.assigntime,
-      sortable:true
-    },
-    {
-      name: 'Assign Status',
-      selector: row => row.status,
-      sortable:true
+      name: 'table_status',
+      label: "Status",
+    options: {
+      filter: true,
+      sort: true,
+     
+    }
     },
    
+   
   ];
-
+  const options = {
+    filterType: 'checkbox',
+    selectableRows:false,
+    rowsPerPage:2
+  };
   
 return (
 <div>
@@ -193,10 +230,10 @@ return (
   <BoxContainer>
     <EmployeeList>
       <TableWrapper>
-    <DataTable
+    <MUIDataTable
       columns={columns}
       data={getData}
-     pagination
+     options={options}
   />
   </TableWrapper>
     </EmployeeList>

@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
-
+import MUIDataTable from 'mui-datatables';
 const Wrapper = styled.div`
   position: relative;
   filter: ${(props) => (props.blur ? 'blur(5px)' : 'none')};
@@ -164,29 +164,45 @@ const getStaffDetails=()=>{
 
   const columns = [
     {
-      name: 'Promotion Name',
-      selector: row => row.name,
-      sortable:true
+      name: 'name',
+      label: "Promotion Name",
+      options: {
+      filter: true,
+        sort: true,
+       
+      }
     },
     {
       name: 'Promotion Type',
       selector: row => row.type,
       sortable:true
     },
+    // {
+    //   name: 'applicableitems',
+    //   label: "Applicable Item",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+        
+    //   }
+    // },
     {
-      name: 'Applicable Items',
-      selector: row => Object.entries(row.applicableitems)
-      .map(([key, values]) => `Category ${key}: ${values.join(', ')}`)
-      .join('; '),
-      sortable:true
-    },
-    {
-      name: 'Discount Amount',
-      selector: row => row.discountamount,
-      sortable:true
+      name: 'discountamount',
+      label: "Discount Amount",
+         options: {
+         filter: true,
+           sort: true,
+          
+         }
     },
    
   ];
+
+  const options = {
+    filterType: 'checkbox',
+    selectableRows:false,
+    rowsPerPage:2
+  };
 
  
   
@@ -196,10 +212,10 @@ return (
   <BoxContainer>
     <EmployeeList>
       <TableWrapper>
-    <DataTable
+    <MUIDataTable
       columns={columns}
       data={getData}
-     pagination
+     options={options}
   />
   </TableWrapper>
     </EmployeeList>

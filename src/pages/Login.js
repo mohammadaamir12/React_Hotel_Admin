@@ -1,179 +1,189 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { LOGINAPI, VALIDATEAPI } from '../Config/config';
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+import '../App.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 
 export default function Login({setAuth }) {
-    const navigate = useNavigate();
-    const [number, setNumber] = useState('');
-    const [showOtp, setShowOtp] = useState(false);
-    const [otp, setOtp] = useState('')
-    const [session,setSession]=useState('')
-    const [userId,setUserId]=useState('')
-    const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate();
+  const [number, setNumber] = useState('');
+  const [showOtp, setShowOtp] = useState(false);
+  const [otp, setOtp] = useState('')
+  const [session,setSession]=useState('')
+  const [userId,setUserId]=useState('')
+  const [loading, setLoading] = useState(false); 
 
-    const handleNumberChange = (e) => {
-        setNumber(e.target.value);
+  useEffect(()=>{
+      const token=localStorage.getItem('token');
+      if(token){
+        
+        setAuth(true)
+        navigate('/')
+      }
+     
+    },[])
 
-    };
-    const handleOtpChange = (e) => {
-        setOtp(e.target.value)
-    }
+  const handleNumberChange = (value) => {
+      const formattedValue = `+${value}`;
+      setNumber(formattedValue);
+
+  };
+  const handleOtpChange = (e) => {
+      setOtp(e.target.value)
+  }
 
 
-    const handleNumberSubmit = (e) => {
-        e.preventDefault();
-        if (number != '') {
-            setLoading(true);
-            axios.post(LOGINAPI, {
-                phone_number: number,
-            })
-                .then(function (response) {
-                    toast('Successfully Otp sent',response.data.challengeParameters.answer)
-                    setSession(response.data.session)
-                    setUserId(response.data.challengeParameters.USERNAME)
-                    
-                    console.log('Successfully Otp sent:', response.data);
-                })
-                .catch(function (error) {
-                    console.error('error', error);
-                    toast('Failed')
-                }).finally(() => {
-                    setLoading(false); 
-                });
-        }
-        console.log('Number submitted:', number);
+  const handleNumberSubmit = (e) => {
+      e.preventDefault();
+      console.log('i am here numbr',number);
+      if (number != '') {
+          setLoading(true);
+          axios.post(LOGINAPI, {
+              phone_number: number,
+              refresh_token:"False"
+          })
+              .then(function (response) {
+                  toast('Successfully Otp sent',{
+                      autoClose: 500,
+                      hideProgressBar: true
+                  })
+                  setSession(response.data.session)
+                  setUserId(response.data.challengeParameters.USERNAME)
+                  console.log('Successfully Otp sent:', response.data);
+              })
+              .catch(function (error) {
+                  console.error('error', error);
+                  toast('Failed',{
+                      autoClose: 500,
+                      hideProgressBar: true
+                  })
+              }).finally(() => {
+                  setLoading(false); 
+              });
+      }
+      console.log('Number submitted:', number);
 
-        setShowOtp(true);
-    };
+      setShowOtp(true);
+  };
 
-    const handleOtpSubmit = (e) => {
-        e.preventDefault();
-        setLoading(true);
-        console.log(userId);
-        console.log(session);
-        console.log(otp);
-        if (otp != '') {
-            axios.post(VALIDATEAPI, {
+  const handleOtpSubmit = (e) => {
+      e.preventDefault();
+      setLoading(true);
+      console.log(userId);
+      console.log(session);
+      console.log(otp);
+      if (otp != '') {
+          axios.post(VALIDATEAPI, {
               phone_number:number,
-                session: session,
-                challengeParameters: {
-                    USERNAME:userId,
-                    answer: otp
-                },
-            },{mode:'cors'})
-                .then(function (response) {
+              session: session,
+              challengeParameters: {
+                  USERNAME:userId,
+                  answer: otp
+              },
+          },{mode:'cors'})
+              .then(function (response) {
                   setLoading(false);
-                    toast('Success')
-                    const token = response.data.idToken;
-                    localStorage.setItem('token', token);
-                    console.log('successful:', response.data);
-                    
-                    setAuth(true)
-                    navigate('/')
-                })
-                .catch(function (error) {
-                    console.error('error', error);
-                    toast('Failed to verify')
-                    setLoading(false);
-                });
-        }
-    };
+                  toast('Success',{
+                      autoClose: 500,
+                      hideProgressBar: true
+                  })
+                  
+                  const token = response.data.security_tokens.idToken;
+                  console.log('token given',token);
+                  const refreshToken=response.data.security_tokens.refreshToken;
+                  const branchId=response.data.details.branchid;
+                  const propertyFolder=response.data.details.property_folder;
+                  const phoneNumber=response.data.details.phone;
+                  localStorage.setItem('token', token);
+                  localStorage.setItem('refresh_token', refreshToken);
+                  localStorage.setItem('branch_id', branchId);
+                  localStorage.setItem('property_folder', propertyFolder);
+                  localStorage.setItem('phone_no', phoneNumber);
+                  console.log('successful:', response.data);
+                  setAuth(true)
+                  navigate('/')
+              })
+              .catch(function (error) {
+                  console.error('error', error);
+                  toast('Failed to verify',{
+                      autoClose: 500,
+                      hideProgressBar: true
+                  })
+                  setLoading(false);
+                  
+              });
+      }
+  };
 
-    return (
-        <div style={styles.authFormContainer}>
-          <form style={styles.authForm} onSubmit={showOtp ? handleOtpSubmit : handleNumberSubmit}>
-            <div style={styles.authFormContent}>
-              <h3 style={styles.authFormTitle}>Sign In</h3>
-              <div style={styles.formGroup}>
-                <label>Enter Your Number</label>
-                <input
-                  type="text"
-                  style={styles.input}
-                  placeholder="Enter number"
-                  value={number}
-                  onChange={handleNumberChange}
-                />
+  // "homepage": "https://mohammadaamir12.github.io/WebCamera",
+
+  return (
+      <div className="Auth-form-container">
+      <div className="background"></div>
+          <form className="Auth-form" onSubmit={showOtp ? handleOtpSubmit : handleNumberSubmit}>
+              <div className="Auth-form-content">
+                  <h3 className="Auth-form-title">Sign In</h3>
+                  <div className="form-group mt-3">
+                      <label>Enter Your Number</label>
+                      <PhoneInput
+                       country={'in'}
+                          // className="form-control mt-1"
+                          placeholder="Enter number"
+                          value={number}
+                          onChange={handleNumberChange}
+                          inputProps={{
+                              
+                              required: true,
+                             
+                            }}
+                            containerStyle={{
+                              width: '100%',
+                            }}
+                            inputStyle={{
+                              width: '100%',
+                              height: '40px',
+                              fontSize: '16px',
+                              borderColor: '#ced4da',
+                              borderRadius: '.25rem',
+                              paddingLeft: '40px', // Adjust according to your layout
+                            }}
+                            buttonStyle={{
+                              borderRadius: '.25rem 0 0 .25rem',
+                              borderColor: '#ced4da',
+                            }}
+                           
+                      />
+                  </div>
+                  {showOtp && (
+                      <div className="form-group mt-3">
+                          <label>OTP</label>
+                          <input
+                              type="text"
+                              className="form-control mt-1"
+                              placeholder="Enter otp here"
+                              value={otp}
+                              onChange={handleOtpChange}
+                          />
+                      </div>
+                  )}
+                  <div className="d-grid gap-2 mt-3">
+                      <button type="submit" className="btn btn-primary">
+                          {showOtp ? 'Submit OTP' : 'Submit Number'}
+                          {loading==true?<div className="loader">Loading...</div>:null}
+                      </button>
+                  </div>
+                  {/* <p className="forgot-password text-right mt-2">
+            Forgot <a href="#">password?</a>
+        </p> */}
               </div>
-              {showOtp && (
-                <div style={styles.formGroup}>
-                  <label>OTP</label>
-                  <input
-                    type="text"
-                    style={styles.input}
-                    placeholder="Enter otp here"
-                    value={otp}
-                    onChange={handleOtpChange}
-                  />
-                </div>
-              )}
-              <div style={styles.buttonContainer}>
-                <button type="submit" style={styles.button}>
-                  {showOtp ? 'Submit OTP' : 'Submit Number'}
-                  {loading ? <div style={styles.loader}>Loading...</div> : null}
-                </button>
-              </div>
-            </div>
           </form>
           <ToastContainer />
-        </div>
-      );
+      </div>
+  )
 }
-const styles = {
-    authFormContainer: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh',
-      backgroundColor: '#f7f7f7',
-    },
-    authForm: {
-      background: '#fff',
-      padding: '2rem',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      width: '100%',
-      maxWidth: '400px',
-      boxSizing: 'border-box',
-    },
-    authFormContent: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    authFormTitle: {
-      marginBottom: '1.5rem',
-    },
-    formGroup: {
-      marginBottom: '1.5rem',
-    },
-    input: {
-      width: '100%',
-      padding: '0.75rem',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-      boxSizing: 'border-box',
-      marginTop: '0.5rem',
-    },
-    buttonContainer: {
-      display: 'grid',
-      gap: '0.5rem',
-      marginTop: '1.5rem',
-    },
-    button: {
-      width: '100%',
-      padding: '0.75rem',
-      border: 'none',
-      borderRadius: '4px',
-      backgroundColor: '#007bff',
-      color: '#fff',
-      fontSize: '1rem',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease',
-    },
-    loader: {
-      marginLeft: '0.5rem',
-    },
-  };

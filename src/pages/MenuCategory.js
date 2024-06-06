@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
+import MUIDataTable from 'mui-datatables';
 
 
 const Wrapper = styled.div`
@@ -166,24 +167,51 @@ const getStaffDetails=()=>{
     
       const columns = [
         {
-          name: 'Category ID',
-          selector: row => row.categories.categoryid,
-          sortable:true
+          name: 'menuid',
+          label: "Menu ID",
+          options: {
+            filter: true,
+            sort: true,
+          }
         },
         {
-          name: 'Menu ID',
-          selector: row => row.menuid,
-          sortable:true
-        },
-        {
-          name: 'Category',
-          selector: row => row.category,
-          sortable:true
+          name: 'categories',
+          label: "Category ID",
+          options: {
+            filter: false,
+            sort: true,
+            customBodyRender: (value) => (
+              <ul>
+                {value.map(category => (
+                  <li key={category.categoryid}>{category.categoryid}</li>
+                ))}
+              </ul>
+            )
+          }
         },
        
+       
+        {
+          name: 'categories',
+          label: "Categories",
+          options: {
+            filter: false,
+            sort: true,
+            customBodyRender: (value) => (
+              <ul>
+                {value.map(category => (
+                  <li key={category.categoryid}>{category.category}</li>
+                ))}
+              </ul>
+            )
+          }
+        }
       ];
     
-    
+      const options = {
+        filterType: 'checkbox',
+        selectableRows:false,
+      };
    
     return (
 
@@ -192,10 +220,10 @@ const getStaffDetails=()=>{
           <BoxContainer>
             <EmployeeList>
               <TableWrapper>
-            <DataTable
+            <MUIDataTable
               columns={columns}
               data={getData}
-        pagination
+        options={options}
           />
           </TableWrapper>
             </EmployeeList>

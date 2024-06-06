@@ -108,6 +108,10 @@ export default function Navbar({menuOpen,setMenuOpen,setDarkMode,darkMode,setAut
   const setLogout=()=>{
     localStorage.removeItem("activeLink")
     localStorage.removeItem("token")
+    localStorage.removeItem('refresh_token');
+                  localStorage.removeItem('branch_id');
+                  localStorage.removeItem('property_folder');
+                  localStorage.removeItem('phone_no',);
     setAuth(false)
     navigate('/login')
   }

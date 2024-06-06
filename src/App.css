@@ -56,6 +56,10 @@
   background-color: white;
 }
 
+.Auth-form-content {
+  padding-left: 12%;
+  padding-right: 12%;
+}
 
 .Auth-form-title {
   text-align: center;
@@ -70,33 +74,14 @@ label {
   font-weight: 600;
   color: rgb(34, 34, 34);
 }
-.Auth-form-content {
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 400px; /* Adjust the max-width as needed */
-  margin: auto;
-  padding: 20px;
+  height: 100%;
+  background-image: url('./assets/image.jpg'); /* Replace 'your-background-image.jpg' with your image path */
+  background-size: cover;
+  filter: blur(3px); /* Adjust the blur effect as needed */
+  z-index: -1; /* Ensure the background stays behind the content */
 }
-
-.form-group {
-  margin-top: 10px;
-}
-
-.form-control {
-  height: 40px; /* Adjust the height of the form controls */
-}
-
-/* Media query for smaller screens */
-@media (max-width: 768px) {
-  .Auth-form-content {
-      max-width: 300px; /* Adjust for smaller screens */
-      padding: 10px;
-  }
-
-  .form-control {
-      height: 30px; /* Adjust height for smaller screens */
-  }
-}
-
-/* Add more media queries as needed for different screen sizes */
-
-/* Rest of your CSS */

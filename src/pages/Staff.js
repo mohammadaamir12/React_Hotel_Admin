@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios'
+import MUIDataTable from 'mui-datatables';
 
 const Wrapper = styled.div`
   position: relative;
@@ -154,28 +155,61 @@ const getStaffDetails=()=>{
      
       const columns = [
         {
-          name: 'Name',
-          selector: row => row.staffname,
-          sortable:true
+          name: 'staffid',
+          label: "Staff ID",
+        options: {
+          filter: true,
+          sort: true,
+        }
         },
         {
-          name: 'Department',
-          selector: row => row.department,
-          sortable:true
+          name: 'staffname',
+          label: "Staff Name",
+        options: {
+          filter: true,
+          sort: true,
+        }
         },
         {
-          name: 'Role',
-          selector: row => row.role,
-          sortable:true
+          name: 'phone',
+          label: "Phone",
+        options: {
+          filter: true,
+          sort: true,
+        }
         },
         {
-          name: 'Hourly Wages',
-          selector: row => row.hourlywage,
-          sortable:true
+          name: 'department',
+          label: "Department",
+        options: {
+          filter: true,
+          sort: true,
+        }
+        },
+        {
+          name: 'role',
+          label: "Role",
+        options: {
+          filter: true,
+          sort: true,
+        }
+        },
+        {
+          name: 'hourlywage',
+          label: "Hourly Wage",
+        options: {
+          filter: true,
+          sort: true,
+        }
         },
       ];
-    
-    
+      
+      const options = {
+        filterType: 'checkbox',
+        selectableRows:false,
+        rowsPerPage:4
+      };
+     
       
   return (
     <div>
@@ -183,10 +217,10 @@ const getStaffDetails=()=>{
       <BoxContainer>
         <EmployeeList>
           <TableWrapper>
-        <DataTable
+        <MUIDataTable
           columns={columns}
           data={getData}
-    pagination
+    options={options}
       />
       </TableWrapper>
         </EmployeeList>

@@ -2,6 +2,8 @@ import React, { useState ,useEffect} from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios'
+import MUIDataTable from 'mui-datatables';
+
 
 
 const Wrapper = styled.div`
@@ -166,28 +168,48 @@ const getStaffDetails=()=>{
 
   const columns = [
     {
-      name: 'Currency ID',
-      selector: row => row.currencyid,
-      sortable:true
+      name: 'currencyid',
+      label: "Currency ID",
+      options: {
+      filter: true,
+        sort: true,
+       
+      }
     },
     {
-      name: 'Currency Name',
-      selector: row => row.currencyname,
-      sortable:true
+      name: 'currencyname',
+      label: "Currency Name",
+      options: {
+      filter: true,
+        sort: true,
+       
+      }
     },
     {
-      name: 'Currency Symbol',
-      selector: row => row.currencysymbol,
-      sortable:true
+      name: 'currencysymbol',
+      label: "Currency Symbol",
+      options: {
+      filter: true,
+        sort: true,
+       
+      }
     },
     {
-      name: 'Currency Country',
-      selector: row => row.country,
-      sortable:true
+      name: 'country',
+      label: "Country",
+      options: {
+      filter: true,
+        sort: true,
+       
+      }
     },
   ];
 
-  
+  const options = {
+    filterType: 'checkbox',
+    selectableRows:false,
+    rowsPerPage:2
+  };
   
 return (
 <div>
@@ -195,10 +217,10 @@ return (
   <BoxContainer>
     <EmployeeList>
       <TableWrapper>
-    <DataTable
+    <MUIDataTable
       columns={columns}
       data={getData}
-     pagination
+     options={options}
   />
   </TableWrapper>
     </EmployeeList>

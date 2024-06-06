@@ -2,6 +2,8 @@ import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
+import MUIDataTable from 'mui-datatables';
+
 
 const Wrapper = styled.div`
   position: relative;
@@ -11,8 +13,6 @@ const Wrapper = styled.div`
 
 const BoxContainer = styled.div`
 border: 1px solid #ccc;
-  padding: 20px;
-  margin-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
   height: 100vh;
@@ -49,6 +49,7 @@ const AddButton = styled.button`
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  margin-left:10px;
 `;
 
 const PopupContainer = styled.div`
@@ -164,41 +165,74 @@ const getStaffDetails=()=>{
     
       const columns = [
         {
-          name: 'Name',
-          selector: row => row.name,
-          sortable:true
+          name: 'categoryid',
+          label: "Category ID",
+          options: {
+            filter: true,
+            sort: true,
+          }
+        },
+       
+        {
+          name: 'menu_items',
+          label: "Item ID",
+          options: {
+            filter: false,
+            sort: true,
+            customBodyRender: (value) => (
+              <ul>
+                {value.map(category => (
+                  <li key={category.item_id}>{category.item_id}</li>
+                ))}
+              </ul>
+            )
+          }
         },
         {
-          name: 'Price',
-          selector: row => row.price,
-          sortable:true
+          name: 'menu_items',
+          label: "Item Name",
+          options: {
+            filter: false,
+            sort: true,
+            customBodyRender: (value) => (
+              <ul>
+                {value.map(category => (
+                  <li key={category.item_name}>{category.item_name}</li>
+                ))}
+              </ul>
+            )
+          }
         },
-        {
-          name: 'Description',
-          selector: row => row.description,
-          sortable:true
-        },
-        {
-            name: 'Availibility',
-            selector: row => row.availibility,
-            sortable:true
-          },
        
       ];
+      const options = {
+        filterType: 'checkbox',
+        selectableRows:false,
+        rowsPerPage:2,
+        elevation:0,
+        // 
+        pagination: true,
+    rowsPerPageOptions: [], 
+      };
+
     
    
   return (
-    <div>
+    <div style={{}}>
     <Wrapper blur={showPopup}>
       <BoxContainer>
       
         <EmployeeList>
         <TableWrapper>
-        <DataTable
-          columns={columns}
-          data={getData}
-    pagination
-      />
+        
+          <MUIDataTable
+            columns={columns}
+            data={getData}
+            options={options}
+            
+          />
+          
+        
       </TableWrapper>
         </EmployeeList>
         <AddButton onClick={() => setShowPopup(true)}>Add Menu</AddButton>

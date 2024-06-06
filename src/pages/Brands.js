@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios'
+import MUIDataTable from "mui-datatables";
 
 const Wrapper = styled.div`
   position: relative;
@@ -13,7 +14,7 @@ const BoxContainer = styled.div`
 border: 1px solid #ccc;
   padding: 20px;
   margin-bottom: 20px;
-  width: 1050px;
+  width: 100%;
   box-sizing: border-box;
   height: 100vh;
 
@@ -169,43 +170,59 @@ const getStaffDetails=()=>{
   const columns = [
     
     {
-      name: 'Brand Name',
-      selector: row => row.brandname,
-      sortable:true
-    },
+      name: "brandname",
+      label: "Brand Name",
+      options: {
+      filter: true,
+      sort: true,
+       }},
     {
-      name: 'Brand Address',
-      selector: row => row.address,
-      sortable:true
-    },
+      name: 'address',
+      label: "Brand Address",
+      options: {
+      filter: true,
+      sort: true,
+       }},
+       {
+        name: 'email',
+        label: "Brand Email",
+        options: {
+        filter: true,
+        sort: true,
+         }},
+         {
+          name: 'phone',
+          label: "Brand Phone",
+          options: {
+          filter: true,
+          sort: true,
+           }},
     {
-      name: 'Brand Email',
-      selector: row => row.email,
-      sortable:true
-    },
+      name: 'website',
+      label: "Brand Websites",
+      options: {
+      filter: true,
+      sort: true,
+       }},
     {
-      name: 'Brand Phone',
-      selector: row => row.phone,
-      sortable:true
-    },
-    {
-        name: 'Brand Websites',
-        selector: row => row.website,
-        sortable:true
-      },
-      {
-        name: 'Social Media',
-        selector: row => row.socialmedia.facebook,
-        sortable:true
-      },
-      {
-        name: 'Description',
-        selector: row => row.description,
-        sortable:true
-      },
+      name: 'socialmedia.facebook',
+      label: "Social Media",
+      options: {
+      filter: true,
+      sort: true,
+       }},
+    
+    //   {
+    //     name: 'Description',
+    //     selector: row => row.description,
+    //     sortable:true
+    //   },
   ];
 
- 
+  const options = {
+    filterType: 'checkbox',
+    selectableRows:false,
+  };
   
 return (
 <div>
@@ -213,10 +230,11 @@ return (
   <BoxContainer>
     <EmployeeList>
       <TableWrapper>
-    <DataTable
+    <MUIDataTable
       columns={columns}
       data={getData}
-     pagination
+      options={options}
+     
   />
   </TableWrapper>
     </EmployeeList>

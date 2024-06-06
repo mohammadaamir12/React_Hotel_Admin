@@ -2,6 +2,8 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios'
+import MUIDataTable from 'mui-datatables';
+
 
 const Wrapper = styled.div`
   position: relative;
@@ -169,48 +171,53 @@ const getStaffDetails=()=>{
     
       const columns = [
         {
-          name: 'Table Catalog',
-          selector: row => row.tableid,
-          sortable:true
+          name: 'tableid',
+          label: "Table ID",
+        options: {
+          filter: true,
+          sort: true,
+        }
         },
         {
-          name: 'Table Schema',
-          selector: row => row.tableSchema,
-          sortable:true
+          name: 'tablenumber',
+          label: "Table Number",
+        options: {
+          filter: true,
+          sort: true,
+        }
         },
         {
-          name: 'Table Number',
-          selector: row => row.tablenumber,
-          sortable:true
+          name: 'capacity',
+          label: "Capacity",
+        options: {
+          filter: true,
+          sort: true,
+        }
         },
         {
-          name: 'Table Type',
-          selector: row => row.tabletype,
-          sortable:true
+          name: 'location',
+          label: "Location",
+        options: {
+          filter: true,
+          sort: true,
+        }
         },
+       
         {
-          name: 'Table Name',
-          selector: row => row.tableName,
-          sortable:true
+          name: 'status',
+          label: "Status",
+        options: {
+          filter: true,
+          sort: true,
+        }
         },
-        {
-            name: 'Capacity',
-            selector: row => row.capacity,
-            sortable:true
-          },
-          {
-            name: 'Location',
-            selector: row => row.location,
-            sortable:true
-          },
-          {
-            name: 'Status',
-            selector: row => row.status ?'True' : 'False',
-            sortable:true
-          },
       ];
     
-      
+      const options = {
+        filterType: 'checkbox',
+        selectableRows:false,
+        rowsPerPage:4
+      };
       
   return (
     <div>
@@ -218,10 +225,10 @@ const getStaffDetails=()=>{
       <BoxContainer>
         <EmployeeList>
           <TableWrapper>
-        <DataTable
+        <MUIDataTable
           columns={columns}
           data={getData}
-         pagination
+        options={options}
       />
       </TableWrapper>
         </EmployeeList>

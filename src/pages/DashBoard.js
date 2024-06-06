@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
+import MUIDataTable from "mui-datatables";
 
 
 const Wrapper = styled.div`
@@ -147,30 +148,33 @@ export default function DashBoard() {
 
   const columns = [
     {
-      name: 'First Name',
-      selector: row => row.firstname,
-      sortable:true
-    },
-    {
-      name: 'Last Name',
-      selector: row => row.lastname,
-      sortable:true
-    },
-    {
-      name: 'Department',
-      selector: row => row.department,
-      sortable:true
-    },
-    {
-      name: 'Role',
-      selector: row => row.role,
-      sortable:true
-    },
-    {
-      name: 'Hourly Wages',
-      selector: row => row.Wages,
-      sortable:true
-    },
+      name: 'firstname',
+      label: "Name",
+      options: {
+      filter: true,
+      sort: true,
+       }},
+       {
+        name: 'department',
+        label: "Department",
+        options: {
+        filter: true,
+        sort: true,
+         }},
+         {
+          name: 'role',
+          label: "Role",
+          options: {
+          filter: true,
+          sort: true,
+           }},
+           {
+            name: 'Wages',
+            label: "Hourly Wages",
+            options: {
+            filter: true,
+            sort: true,
+             }},
   ];
 
   const data = [
@@ -191,6 +195,10 @@ export default function DashBoard() {
     Wages:'3000',
 	},
 ]
+const options = {
+  filterType: 'checkbox',
+  selectableRows:false,
+};
   
   
   return (
@@ -199,10 +207,10 @@ export default function DashBoard() {
         <BoxContainer>
           <EmployeeList>
             <TableWrapper>
-          <DataTable
+          <MUIDataTable
 			columns={columns}
 			data={data}
-      pagination
+      options={options}
 		/>
     </TableWrapper>
           </EmployeeList>

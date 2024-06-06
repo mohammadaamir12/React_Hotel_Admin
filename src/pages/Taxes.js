@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
+import MUIDataTable from 'mui-datatables';
 
 const Wrapper = styled.div`
   position: relative;
@@ -169,43 +170,68 @@ const getStaffDetails=()=>{
 
   const columns = [
     {
-      name: 'Tax name',
-      selector: row => row.taxname,
-      sortable:true
+      name: 'taxname',
+      label: "Tax Name",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-      name: 'Item Category',
-      selector: row => row.itemcategory,
-      sortable:true
+      name: 'itemcategory',
+      label: "Item Category",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-      name: 'Industry Type',
-      selector: row => row.industrytype,
-      sortable:true
+      name: 'industrytype',
+      label: "Industry Type",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-      name: 'Tax Country',
-      selector: row => row.country,
-      sortable:true
+      name: 'country',
+      label: "Country",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-      name: 'State Province',
-      selector: row => row.state_province,
-      sortable:true
+      name: 'state_province',
+      label: "State Province",
+      options: {
+        filter: true,
+        sort: true,
+      }
     },
     {
-        name: 'Percentage',
-        selector: row => row.percentage,
-        sortable:true
+        name: 'percentage',
+        label: "Percentage",
+      options: {
+        filter: true,
+        sort: true,
+      }
       },
       {
-        name: 'Description',
-        selector: row => row.description,
-        sortable:true
+        name: 'description',
+        label: "Description",
+      options: {
+        filter: true,
+        sort: true,
+      }
       },
   ];
 
-  
+  const options = {
+    filterType: 'checkbox',
+    selectableRows:false,
+    rowsPerPage:2
+  };
   
 return (
 <div>
@@ -213,10 +239,10 @@ return (
   <BoxContainer>
     <EmployeeList>
       <TableWrapper>
-    <DataTable
+    <MUIDataTable
       columns={columns}
       data={getData}
-     pagination
+     options={options}
   />
   </TableWrapper>
     </EmployeeList>
