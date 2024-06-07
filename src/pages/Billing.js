@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
+import MUIDataTable from 'mui-datatables';
+import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
 
 const Wrapper = styled.div`
   position: relative;
@@ -126,6 +129,96 @@ const TableWrapper = styled.div`
 
 
 export default function Billing() {
+  const [secondShowPopup, setSecondShowPopup] = useState(false);
+  const [getData,setGetData]=useState([])
+  const [startDate,setStartDate]=useState('')
+  const [endDate,setEndDate]=useState('')
+  useEffect(()=>{
+    getStaffDetails();
+     },[])
+   
+   const getStaffDetails=()=>{
+     axios.get('https://m3gr2x1eng.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-menuItems', {
+       params: {
+         branch_id:1
+       }
+     })
+     .then(function (response) {
+       // console.log(response.data);
+       setGetData(response.data);
+     })
+     .catch(function (error) {
+       console.log(error);
+     });
+   }
+
+   const options = {
+    filterType: 'checkbox',
+    selectableRows:false,
+    rowsPerPage:2,
+    elevation:0,
+    // 
+    pagination: true,
+rowsPerPageOptions: [], 
+filter: true,
+customFilterDialogFooter: () => (
+  <div onClick={() => handleFilterButtonClick()}>
+  <button>Filter Button</button>
+</div>
+)
+  };
+
+  const handleFilterButtonClick = () => {
+   setSecondShowPopup(true)
+   
+  };
+
+  const handleFilterEmployee=()=>{
+
+  }
+
+  const columns = [
+    {
+      name: 'categoryid',
+      label: "Category ID",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+   
+    {
+      name: 'menu_items',
+      label: "Item ID",
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (value) => (
+          <ul>
+            {value.map(category => (
+              <li key={category.item_id}>{category.item_id}</li>
+            ))}
+          </ul>
+        )
+      }
+    },
+    {
+      name: 'menu_items',
+      label: "Item Name",
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (value) => (
+          <ul>
+            {value.map(category => (
+              <li key={category.item_name}>{category.item_name}</li>
+            ))}
+          </ul>
+        )
+      }
+    },
+   
+  ];
     const [employees, setEmployees] = useState([
         { id: 1, name: 'John Doe' },
         { id: 2, name: 'Jane Smith' },
@@ -144,72 +237,25 @@ export default function Billing() {
           setShowPopup(false); // Close the popup after adding employee
         }
       };
-    
-      const columns = [
-        {
-          name: 'Payment Method',
-          selector: row => row.paymentmethod,
-          sortable:true
-        },
-        {
-          name: 'Total Amount',
-          selector: row => row.totalAmount,
-          sortable:true
-        },
-        {
-          name: 'Tax Amount',
-          selector: row => row.taxamount,
-          sortable:true
-        },
-        {
-          name: 'Tip Amount',
-          selector: row => row.tipamount,
-          sortable:true
-        },
-        {
-          name: 'Discount',
-          selector: row => row.discount,
-          sortable:true
-        },
-      ];
-    
-      const data = [
-          {
-            id: 1,
-            paymentmethod: 'Card',
-        totalAmount:'2200',
-        taxamount:'188',
-        tipamount:'12',
-        discount:'20%',
-        },
-        {
-            id: 2,
-            paymentmethod: 'Cash',
-        totalAmount:'4000',
-        taxamount:'300',
-        tipamount:'100',
-        discount:'20%',
-        },
-    ]
       
       
       return (
         <div>
-          <Wrapper blur={showPopup}>
+          <Wrapper blur={showPopup || secondShowPopup}>
             <BoxContainer>
               <EmployeeList>
                 <TableWrapper>
-              <DataTable
+              <MUIDataTable
                 columns={columns}
-                data={data}
-          pagination
+                data={getData}
+          options={options}
             />
             </TableWrapper>
               </EmployeeList>
               <AddButton onClick={() => setShowPopup(true)}>Add Bill</AddButton>
             </BoxContainer>
           </Wrapper>
-          <Overlay show={showPopup} onClick={() => setShowPopup(false)} />
+          <Overlay show={showPopup || secondShowPopup} onClick={() => {setShowPopup(false); setSecondShowPopup(false)}} />
           <PopupContainer show={showPopup}>
             <AuthFormContainer>
               <form>
@@ -254,6 +300,34 @@ export default function Billing() {
               </form>
             </AuthFormContainer>
           </PopupContainer>
+          <PopupContainer show={secondShowPopup}>
+        <AuthFormContainer>
+          <form>
+          <FormGroup>
+                  <label>Start Date</label>
+                  <FormControl
+                    type="text"
+                    placeholder="2022-23-01"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <label>End Date</label>
+                  <FormControl type="text" placeholder="2024-02-01" 
+                   value={endDate}
+                   onChange={(e) => setEndDate(e.target.value)}
+                  />
+
+                </FormGroup>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+  <SubmitButton type="submit" onClick={handleFilterEmployee}>
+    Search
+  </SubmitButton>
+</div>
+          </form>
+        </AuthFormContainer>
+      </PopupContainer>
         </div>
       )
 }

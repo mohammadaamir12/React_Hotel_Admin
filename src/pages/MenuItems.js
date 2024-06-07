@@ -3,6 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import MUIDataTable from 'mui-datatables';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 const Wrapper = styled.div`
@@ -156,8 +157,8 @@ const getStaffDetails=()=>{
       ]);
       const [newEmployeeName, setNewEmployeeName] = useState('');
       const [showPopup, setShowPopup] = useState(false);
-    
-      const handleAddEmployee = () => {
+  
+      const handleAddEmployee = (e) => {
        
         e.preventDefault(); // Prevent form submission
         const postData ={menu_id: '193798766431917026969992930715165520777',
@@ -246,11 +247,12 @@ const getStaffDetails=()=>{
     rowsPerPageOptions: [], 
       };
 
+      
     
    
   return (
     <div style={{}}>
-    <Wrapper blur={showPopup}>
+    <Wrapper blur={showPopup }>
       <BoxContainer>
       
         <EmployeeList>
@@ -269,7 +271,7 @@ const getStaffDetails=()=>{
         <AddButton onClick={() => setShowPopup(true)}>Add Menu</AddButton>
       </BoxContainer>
     </Wrapper>
-    <Overlay show={showPopup} onClick={() => setShowPopup(false)} />
+    <Overlay show={showPopup } onClick={() => {setShowPopup(false); }} />
     <PopupContainer show={showPopup}>
       <AuthFormContainer>
         <form>
@@ -333,6 +335,7 @@ const getStaffDetails=()=>{
         </form>
       </AuthFormContainer>
     </PopupContainer>
+    
   </div>
   )
 }
