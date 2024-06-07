@@ -131,6 +131,7 @@ const TableWrapper = styled.div`
 export default function Billing() {
   const [secondShowPopup, setSecondShowPopup] = useState(false);
   const [getData,setGetData]=useState([])
+  const [data,setData]=useState([])
   const [startDate,setStartDate]=useState('')
   const [endDate,setEndDate]=useState('')
   useEffect(()=>{
@@ -174,7 +175,20 @@ customFilterDialogFooter: () => (
   };
 
   const handleFilterEmployee=()=>{
-
+    axios.get('https://1inwmj2h77.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-billing', {
+       params: {
+         branch_id:1,
+         start_date:'2024-05-20',
+         end_date:'2024-05-30'
+       }
+     })
+     .then(function (response) {
+       // console.log(response.data);
+       setData(response.data);
+     })
+     .catch(function (error) {
+       console.log(error);
+     });
   }
 
   const columns = [
