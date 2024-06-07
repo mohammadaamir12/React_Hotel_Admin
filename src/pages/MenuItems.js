@@ -126,6 +126,12 @@ const TableWrapper = styled.div`
 
 export default function MenuItems() {
   const [getData,setGetData]=useState([])
+  const [menuCategory,setMenuCategory]=useState('')
+  const [menuItemName,setMenuItemname]=useState('')
+  const [menuDesc,setMenuDesc]=useState('')
+  const [menuPrice,setMenuPrice]=useState('')
+  const [avail,setAvail]=useState('')
+  const [taxID,setTaxID]=useState('')
   useEffect(()=>{
  getStaffDetails();
   },[])
@@ -152,15 +158,40 @@ const getStaffDetails=()=>{
       const [showPopup, setShowPopup] = useState(false);
     
       const handleAddEmployee = () => {
-        if (newEmployeeName.trim() !== '') {
-          const newEmployee = {
-            id: employees.length + 1,
-            name: newEmployeeName,
-          };
-          setEmployees([...employees, newEmployee]);
-          setNewEmployeeName('');
-          setShowPopup(false); // Close the popup after adding employee
-        }
+       
+        e.preventDefault(); // Prevent form submission
+        const postData ={menu_id: '193798766431917026969992930715165520777',
+        items: [
+              {category: "Appetizers", item_name: "Dahi ke Sholey",  description: "Hung Curd wrapped mixed with Indian Spices wrapped in bread and Deep Fried", price: 250, availability: "true", tax_id: "T1"},
+                     ]
+       }
+       console.log("hello");
+       axios.post('https://hv3fnqiy9a.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-menu_items', postData,{
+            headers: {
+              "Content-Type":'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+              'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+          },
+          mode: 'cors'
+          })
+    .then(response => {
+        console.log('Response:', response.data);
+        toast('Successfully Inserted',{
+          autoClose: 500,
+          hideProgressBar: true
+      })
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        toast('Failed to Insert',{
+          autoClose: 500,
+          hideProgressBar: true
+      })
+    });
+  
+        console.log('submit location');
+          setShowPopup(false);
       };
     
       const columns = [
@@ -242,28 +273,53 @@ const getStaffDetails=()=>{
     <PopupContainer show={showPopup}>
       <AuthFormContainer>
         <form>
+        <FormGroup>
+            <label>Category</label>
+            <FormControl
+              type="text"
+              placeholder="eg:-Mohit"
+              value={menuCategory}
+              onChange={(e) => setMenuCategory(e.target.value)}
+            />
+          </FormGroup>
           <FormGroup>
             <label>Item Name</label>
             <FormControl
               type="text"
               placeholder="eg:-Mohit"
-              value={newEmployeeName}
-              onChange={(e) => setNewEmployeeName(e.target.value)}
+              value={menuItemName}
+              onChange={(e) => setMenuItemname(e.target.value)}
             />
           </FormGroup>
           <FormGroup>
             <label>Item Price</label>
-            <FormControl type="text" placeholder="eg:-Mathur" />
+            <FormControl type="text" placeholder="eg:-Mathur" 
+            value={menuPrice}
+            onChange={(e) => setMenuPrice(e.target.value)}
+            />
           </FormGroup>
           
           <FormGroup>
             <label>Description</label>
-            <FormControl type="text" placeholder="eg:-Housing" />
+            <FormControl type="text" placeholder="eg:-Housing" 
+            value={menuDesc}
+            onChange={(e) => setMenuDesc(e.target.value)}
+            />
           </FormGroup>
           
           <FormGroup>
             <label>Availibility</label>
-            <FormControl type="text" placeholder="eg:-Mathur" />
+            <FormControl type="text" placeholder="eg:-Mathur"
+            value={avail}
+            onChange={(e) => setAvail(e.target.value)}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Tax ID</label>
+            <FormControl type="text" placeholder="eg:-Mathur"
+            value={taxID}
+            onChange={(e) => setTaxID(e.target.value)}
+            />
           </FormGroup>
         
           

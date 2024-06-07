@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios'
 import MUIDataTable from 'mui-datatables';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 const Wrapper = styled.div`
@@ -132,6 +133,11 @@ const TableWrapper = styled.div`
 
 export default function Tables() {
   const [getData,setGetData]=useState([])
+  const [tableNo,setTableNo]=useState('')
+  const [tableCapacity,setTableCapacity]=useState('')
+  const [tableLocation,setTableLocation]=useState('')
+  const [tableStatus,setTableStatus]=useState('')
+
   useEffect(()=>{
  getStaffDetails();
   },[])
@@ -154,19 +160,46 @@ const getStaffDetails=()=>{
         { id: 1, name: 'John Doe' },
         { id: 2, name: 'Jane Smith' },
       ]);
-      const [newEmployeeName, setNewEmployeeName] = useState('');
+   
       const [showPopup, setShowPopup] = useState(false);
     
-      const handleAddEmployee = () => {
-        if (newEmployeeName.trim() !== '') {
-          const newEmployee = {
-            id: employees.length + 1,
-            name: newEmployeeName,
-          };
-          setEmployees([...employees, newEmployee]);
-          setNewEmployeeName('');
+      const handleAddEmployee = (e) => {
+        e.preventDefault(); // Prevent form submission
+        const postData = {
+          table_number: "4",
+          capacity: "10",
+          location: "Right Corner",
+          status: "true"
+      };
+        if (tableNo.trim() !== '' && tableCapacity.trim() !== '' && tableLocation.trim() !== '' && tableStatus.trim() !== '') {
+          axios.post('https://96p9b8hcyh.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-tables', postData,{
+            headers: {
+              "Content-Type":'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+              'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+          },
+          mode: 'cors'
+          })
+    .then(response => {
+        console.log('Response:', response.data);
+        toast('Successfully Inserted',{
+          autoClose: 500,
+          hideProgressBar: true
+      })
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        toast('Failed to Insert',{
+          autoClose: 500,
+          hideProgressBar: true
+      })
+    });
+  
+        console.log('submit location');
           setShowPopup(false); // Close the popup after adding employee
         }
+    
       };
     
       const columns = [
@@ -238,47 +271,34 @@ const getStaffDetails=()=>{
     <Overlay show={showPopup} onClick={() => setShowPopup(false)} />
     <PopupContainer show={showPopup}>
       <AuthFormContainer>
-        <form>
+        <form > 
           <FormGroup>
-            <label>Table Catalog</label>
-            <FormControl
-              type="text"
-              placeholder="eg:-Mohit"
-              value={newEmployeeName}
-              onChange={(e) => setNewEmployeeName(e.target.value)}
+            <label>Table Number</label>
+            <FormControl type="text" placeholder="eg:-Housing"
+             value={tableNo}
+             onChange={(e) => setTableNo(e.target.value)}
             />
           </FormGroup>
           <FormGroup>
-            <label>Table Schema</label>
-            <FormControl type="text" placeholder="eg:-Mathur" />
-          </FormGroup>
-          
-          <FormGroup>
-            <label>Table Number</label>
-            <FormControl type="text" placeholder="eg:-Housing" />
-          </FormGroup>
-          
-          <FormGroup>
-            <label>Table Type</label>
-            <FormControl type="text" placeholder="eg:-Mathur" />
-          </FormGroup>
-          
-         
-          <FormGroup>
-            <label>Table Name</label>
-            <FormControl type="text" placeholder="eg:-250" />
-          </FormGroup>
-          <FormGroup>
             <label>Table Capacity</label>
-            <FormControl type="text" placeholder="eg:-250" />
+            <FormControl type="text" placeholder="eg:-250"
+             value={tableCapacity}
+             onChange={(e) => setTableCapacity(e.target.value)}
+            />
           </FormGroup>
           <FormGroup>
             <label>Table Location</label>
-            <FormControl type="text" placeholder="eg:-250" />
+            <FormControl type="text" placeholder="eg:-250"
+             value={tableLocation}
+             onChange={(e) => setTableLocation(e.target.value)}
+            />
           </FormGroup>
           <FormGroup>
             <label>Table Status</label>
-            <FormControl type="text" placeholder="eg:-250" />
+            <FormControl type="text" placeholder="eg:-250"
+             value={tableStatus}
+             onChange={(e) => setTableStatus(e.target.value)}
+            />
           </FormGroup>
           
           <div
@@ -291,6 +311,7 @@ const getStaffDetails=()=>{
         </form>
       </AuthFormContainer>
     </PopupContainer>
+    <ToastContainer/>
   </div>
   )
 }

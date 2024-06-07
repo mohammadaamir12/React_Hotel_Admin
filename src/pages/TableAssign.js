@@ -152,16 +152,10 @@ const getStaffDetails=()=>{
   const [newEmployeeName, setNewEmployeeName] = useState('');
   const [showPopup, setShowPopup] = useState(false);
 
-  const handleAddEmployee = () => {
-    if (newEmployeeName.trim() !== '') {
-      const newEmployee = {
-        id: employees.length + 1,
-        name: newEmployeeName,
-      };
-      setEmployees([...employees, newEmployee]);
-      setNewEmployeeName('');
+  const handleAddEmployee = (e) => {
+    e.preventDefault();
       setShowPopup(false); // Close the popup after adding employee
-    }
+    
   };
 
   const columns = [
