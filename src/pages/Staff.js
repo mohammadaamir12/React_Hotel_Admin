@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios'
 import MUIDataTable from 'mui-datatables';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Wrapper = styled.div`
   position: relative;
@@ -156,7 +157,7 @@ const getStaffDetails=()=>{
 
       const [showPopup, setShowPopup] = useState(false);
     
-      const handleAddEmployee = () => {
+      const handleAddEmployee = (e) => {
         e.preventDefault(); // Prevent form submission
         const postData = {
           branchId : "1a",
