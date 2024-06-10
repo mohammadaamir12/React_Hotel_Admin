@@ -4,6 +4,9 @@ import DataTable from 'react-data-table-component';
 import axios from 'axios'
 import MUIDataTable from 'mui-datatables';
 import { ToastContainer, toast } from 'react-toastify';
+import PrintIcon from '@mui/icons-material/UploadFile'; // Importing the print icon from MUI
+import Button from '@mui/material/Button';
+import * as XLSX from 'xlsx';
 
 const Wrapper = styled.div`
   position: relative;
@@ -134,6 +137,8 @@ export default function Staff() {
   const [role,setRole]=useState('')
   const [hourlyWages,setHourlyWages]=useState('')
   const [hiredate,setHireDate]=useState('')
+  const [data,setData]=useState([])
+  const [file,setFile]=useState(null)
   useEffect(()=>{
  getStaffDetails();
   },[])
@@ -156,6 +161,7 @@ const getStaffDetails=()=>{
    
 
       const [showPopup, setShowPopup] = useState(false);
+      const [showUploadPopUp,setShowUploadPopUp]=useState(false)
     
       const handleAddEmployee = (e) => {
         e.preventDefault(); // Prevent form submission
@@ -254,13 +260,70 @@ const getStaffDetails=()=>{
       const options = {
         filterType: 'checkbox',
         selectableRows:false,
-        rowsPerPage:4
+        rowsPerPage:4,
+        customToolbar: () => {
+          return (
+            <div>
+              {/* Default print button */}
+              <Button onClick={() =>setShowUploadPopUp(true)} variant="contained" startIcon={<PrintIcon />} size="small">
+                Upload
+              </Button>
+             
+            </div>
+          );
+        }
       };
+
+      const handleFileUpload = (e) => {
+        setFile(e.target.files[0]);
+      };
+
+      const handleUpload = () => {
+        if (!file) {
+          console.error("No file selected.");
+          return;
+        }
+    
+        const reader = new FileReader();
+    
+        reader.onload = (evt) => {
+          const bstr = evt.target.result;
+          const workbook = XLSX.read(bstr, { type: 'binary' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    
+          // Remove header row
+          excelData.shift();
+    
+          const formattedData = excelData.map(row => ({
+            table_number: row[0],
+            capacity: row[1],
+            location: row[2],
+            status: row[3]
+          }));
+    
+          // Send data to the API
+          setData(formattedData);
+        };
+         showUpload();
+        reader.readAsBinaryString(file);
+      };
+    
+      const showUpload = () => {
+        if (data.length === 0) {
+          console.error("No data to send.");
+          return;
+        }
+        else{
+       console.log(data,'excel data');
+        }
+      } 
      
       
   return (
     <div>
-    <Wrapper blur={showPopup}>
+    <Wrapper blur={showPopup || showUploadPopUp }>
       <BoxContainer>
         <EmployeeList>
           <TableWrapper>
@@ -274,7 +337,7 @@ const getStaffDetails=()=>{
         <AddButton onClick={() => setShowPopup(true)}>Add Staff</AddButton>
       </BoxContainer>
     </Wrapper>
-    <Overlay show={showPopup} onClick={() => setShowPopup(false)} />
+    <Overlay show={showPopup || showUploadPopUp } onClick={() => {setShowPopup(false); setShowUploadPopUp(false); }} />
     <PopupContainer show={showPopup}>
       <AuthFormContainer>
         <form>
@@ -337,6 +400,14 @@ const getStaffDetails=()=>{
             </SubmitButton>
           </div>
         </form>
+      </AuthFormContainer>
+    </PopupContainer>
+    <PopupContainer show={showUploadPopUp}>
+      <AuthFormContainer>
+      <div style={{alignItems:'center',justifyContent:'center',display:'flex',flexDirection:'column'}} >
+      <input type="file" style={{marginBottom:5}} onClick={handleFileUpload} />
+        <SubmitButton style={{marginTop:5}} onClick={handleUpload}>Submit</SubmitButton>
+        </div>
       </AuthFormContainer>
     </PopupContainer>
   </div>
