@@ -87,8 +87,7 @@ const AuthFormContainer = styled.div`
   max-width: 400px;
   margin: auto;
   padding: 20px;
-  height: 400px;
-  overflow:scroll;
+  height: 150px;
 `;
 
 const FormGroup = styled.div`
@@ -142,6 +141,7 @@ export default function Tables() {
   const [tableStatus,setTableStatus]=useState('')
   const [data,setData]=useState([])
   const [file,setFile]=useState(null)
+  const [tableType,setTableType]=useState('')
 
   useEffect(()=>{
  getStaffDetails();
@@ -168,45 +168,50 @@ const getStaffDetails=()=>{
    
       const [showPopup, setShowPopup] = useState(false);
       const [showUploadPopUp,setShowUploadPopUp]=useState(false)
+      const [loading, setLoading] = useState(false);
     
       const handleAddEmployee = (e) => {
         e.preventDefault(); // Prevent form submission
         const postData = {
-          table_number: "4",
-          capacity: "10",
-          location: "Right Corner",
-          status: "true"
-      };
-        if (tableNo.trim() !== '' && tableCapacity.trim() !== '' && tableLocation.trim() !== '' && tableStatus.trim() !== '') {
-          axios.post('https://96p9b8hcyh.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-tables', postData,{
-            headers: {
-              "Content-Type":'application/json',
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-              'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
-          },
-          mode: 'cors'
-          })
-    .then(response => {
-        console.log('Response:', response.data);
-        toast('Successfully Inserted',{
-          autoClose: 500,
-          hideProgressBar: true
-      })
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        toast('Failed to Insert',{
-          autoClose: 500,
-          hideProgressBar: true
-      })
-    });
+          branch_id: "1",
+          tables: [
+                 {table_number : tableNo, capacity : tableCapacity, location : tableLocation, status : tableStatus,  table_type : "Standard"}
+                        ]
+          }
+        if (tableNo.trim() !== '' && tableCapacity.trim() !== '' && tableLocation.trim() !== '' && tableStatus.trim() !== '' && tableType.trim()!== '') {
+          axios.post(
+            'https://96p9b8hcyh.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-tables',
+            postData,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    // Remove Access-Control headers from client request
+                },
+                withCredentials: true, // Consider adding this if dealing with cookies or sessions
+            }
+        )
+        .then(response => {
+            console.log('Response:', response.data);
+            toast('Successfully Inserted', {
+                autoClose: 500,
+                hideProgressBar: true
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            toast('Failed to Insert', {
+                autoClose: 500,
+                hideProgressBar: true
+            });
+        });
   
         console.log('submit location');
           setShowPopup(false); // Close the popup after adding employee
         }
     
       };
+
+      
     
       const columns = [
         {
@@ -274,11 +279,12 @@ const getStaffDetails=()=>{
       };
 
       const handleUpload = () => {
+        setLoading(true)
         if (!file) {
           console.error("No file selected.");
           return;
         }
-    
+       setLoading(true)
         const reader = new FileReader();
     
         reader.onload = (evt) => {
@@ -295,13 +301,16 @@ const getStaffDetails=()=>{
             table_number: row[0],
             capacity: row[1],
             location: row[2],
-            status: row[3]
+            status: row[3],
+            table_type:row[4]
           }));
     
           // Send data to the API
           setData(formattedData);
+          setLoading(false)
+          handleAddEmployee1()
         };
-         showUpload();
+         
         reader.readAsBinaryString(file);
       };
     
@@ -314,6 +323,46 @@ const getStaffDetails=()=>{
        console.log(data,'excel data');
         }
       } 
+      const handleAddEmployee1 = (e) => {
+        console.log(data,'aamir');
+         const postData = {
+           branch_id: "1",
+           tables: data
+           }
+         if (data!=='') {
+           axios.post(
+             'https://96p9b8hcyh.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-tables',
+             postData,
+             {
+                 headers: {
+                     "Content-Type": "application/json",
+                     // Remove Access-Control headers from client request
+                 },
+                 withCredentials: true, // Consider adding this if dealing with cookies or sessions
+             }
+         )
+         .then(response => {
+             console.log('Response:', response.data);
+             toast('Successfully Inserted', {
+                 autoClose: 500,
+                 hideProgressBar: true
+             });
+             setData([])
+             showUploadPopUp(false)
+         })
+         .catch(error => {
+             console.error('Error:', error);
+             toast('Failed to Insert', {
+                 autoClose: 500,
+                 hideProgressBar: true
+             });
+         });
+   
+         console.log('submit location');
+           setShowPopup(false); // Close the popup after adding employee
+         }
+     
+       };
       
   return (
     <div>
@@ -363,6 +412,13 @@ const getStaffDetails=()=>{
              onChange={(e) => setTableStatus(e.target.value)}
             />
           </FormGroup>
+          <FormGroup>
+            <label>Table Type</label>
+            <FormControl type="text" placeholder="eg:-250"
+             value={tableType}
+             onChange={(e) => setTableType(e.target.value)}
+            />
+          </FormGroup>
           
           <div
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -377,8 +433,9 @@ const getStaffDetails=()=>{
     <PopupContainer show={showUploadPopUp}>
       <AuthFormContainer>
       <div style={{alignItems:'center',justifyContent:'center',display:'flex',flexDirection:'column'}} >
-      <input type="file" style={{marginBottom:5}} onClick={handleFileUpload} />
+      <input type="file" style={{marginBottom:5}} onChange={handleFileUpload} />
         <SubmitButton style={{marginTop:5}} onClick={handleUpload}>Submit</SubmitButton>
+        {loading && <div>Uploading...</div>}
         </div>
       </AuthFormContainer>
     </PopupContainer>

@@ -233,6 +233,22 @@ export default function Sidebar({setMenuOpen,setDarkMode,darkMode,menuOpen}) {
         <ArrowRight/>
       </Elements>
       </Link>
+      <a
+    href="https://public.tableau.com/app/profile/mridul.miglani/viz/Dashboard_17160211508670/SalesAnalytics"
+    onClick={(e) => {
+        e.preventDefault(); // Prevent default navigation
+        handleSetActive('report');
+        window.open('https://public.tableau.com/app/profile/mridul.miglani/viz/Dashboard_17160211508670/SalesAnalytics', '_blank'); // Open the URL in a new tab
+    }}
+    style={{ textDecoration: 'none', color: '#c9c9c9', width: '90%' }}
+>
+    <Elements style={{ backgroundColor: activeLink === 'report' ? '#5894f5' : 'transparent', borderRadius: 5, width: '85%', marginLeft: 2 }}>
+        <Print />
+        <NavText>Report</NavText>
+        <ArrowRight />
+    </Elements>
+</a>
+
       </div>
     </Menucontainer>
   )

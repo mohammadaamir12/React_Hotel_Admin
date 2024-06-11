@@ -22,6 +22,7 @@ import Visits from './pages/Visits';
 import Orders from './pages/Orders';
 import Login from './pages/Login';
 import GlobalStyle from './pages/Global';
+import Report from './pages/Report';
 
 const Container=styled.div`
 background:${({theme})=> theme.bg};
@@ -70,6 +71,7 @@ function App() {
     <Route path='/taxes'  element={isAuth ? <Taxes /> : <Navigate to="/login" />} />
     <Route path='/visits'  element={isAuth ? <Visits /> : <Navigate to="/login" />} />
     <Route path='/orders'  element={isAuth ? <Orders /> : <Navigate to="/login" />} />
+    <Route path='/report'  element={isAuth ? <Report /> : <Navigate to="/login" />} />
     
     
    </Routes>

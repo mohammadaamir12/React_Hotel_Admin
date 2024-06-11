@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios'
 import MUIDataTable from 'mui-datatables';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Wrapper = styled.div`
   position: relative;
@@ -151,18 +152,42 @@ const getStaffDetails=()=>{
   const [newEmployeeName, setNewEmployeeName] = useState('');
   const [showPopup, setShowPopup] = useState(false);
 
-  const handleAddEmployee = () => {
-    if (newEmployeeName.trim() !== '') {
-      const newEmployee = {
-        id: employees.length + 1,
-        name: newEmployeeName,
-      };
-      setEmployees([...employees, newEmployee]);
-      setNewEmployeeName('');
-      setShowPopup(false); // Close the popup after adding employee
-    }
-  };
+  const handleAddEmployee = (e) => {
+       
+    e.preventDefault(); // Prevent form submission
+    const postData ={menu_id: '193798766431917026969992930715165520777',
+    items: [
+          {category: "Appetizers", item_name: "Dahi ke Sholey",  description: "Hung Curd wrapped mixed with Indian Spices wrapped in bread and Deep Fried", price: 250, availability: "true", tax_id: "T1"},
+                 ]
+   }
+   console.log("hello");
+   axios.post('https://f5aj3ocx37.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-branches', postData,{
+        headers: {
+          "Content-Type":'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+      },
+      mode: 'cors'
+      })
+.then(response => {
+    console.log('Response:', response.data);
+    toast('Successfully Inserted',{
+      autoClose: 500,
+      hideProgressBar: true
+  })
+})
+.catch(error => {
+    console.error('Error:', error);
+    toast('Failed to Insert',{
+      autoClose: 500,
+      hideProgressBar: true
+  })
+});
 
+    console.log('submit location');
+      setShowPopup(false);
+  };
   const columns = [
     {
       name: 'branchname',

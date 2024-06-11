@@ -166,14 +166,15 @@ const getStaffDetails=()=>{
       const [newEmployeeName, setNewEmployeeName] = useState('');
       const [showPopup, setShowPopup] = useState(false);
       const [showUploadPopUp,setShowUploadPopUp]=useState(false)
+      const [loading, setLoading] = useState(false);
   
       const handleAddEmployee = (e) => {
        
         e.preventDefault(); // Prevent form submission
-        const postData ={menu_id: '193798766431917026969992930715165520777',
+        const postData ={menu_id: "1",
         items: [
-              {category: "Appetizers", item_name: "Dahi ke Sholey",  description: "Hung Curd wrapped mixed with Indian Spices wrapped in bread and Deep Fried", price: 250, availability: "true", tax_id: "T1"},
-                     ]
+              {category_id: "1", item_name: "Dahi ke Sholey",  description: "Hung Curd wrapped mixed with Indian Spices wrapped in bread and Deep Fried", price: 250, availability: "true", tax_id: "4", dietary_choices: {diet: "vegetarian", allergens: ["Dairy"]}}]
+             
        }
        console.log("hello");
        axios.post('https://hv3fnqiy9a.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-menu_items', postData,{
@@ -203,6 +204,8 @@ const getStaffDetails=()=>{
         console.log('submit location');
           setShowPopup(false);
       };
+
+    
     
       const columns = [
         {
@@ -277,6 +280,7 @@ const getStaffDetails=()=>{
       };
 
       const handleUpload = () => {
+        setLoading(true)
         if (!file) {
           console.error("No file selected.");
           return;
@@ -295,16 +299,21 @@ const getStaffDetails=()=>{
           excelData.shift();
     
           const formattedData = excelData.map(row => ({
-            table_number: row[0],
-            capacity: row[1],
-            location: row[2],
-            status: row[3]
+            category_id: row[0],
+            item_name: row[1],
+            description: row[2],
+            price: row[3],
+            availability:row[4],
+            tax_id:row[5],
+            dietary_choices:""
           }));
     
           // Send data to the API
           setData(formattedData);
+          setLoading(false)
+          handleAddEmployee1()
         };
-         showUpload();
+        
         reader.readAsBinaryString(file);
       };
     
@@ -317,6 +326,46 @@ const getStaffDetails=()=>{
        console.log(data,'excel data');
         }
       } 
+
+      const handleAddEmployee1 = (e) => {
+       
+        const postData = {menu_id: "1",
+        items:data
+       }
+        if (data!=='') {
+          axios.post(
+            'https://hv3fnqiy9a.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-menu_items',
+            postData,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    // Remove Access-Control headers from client request
+                },
+                withCredentials: true, // Consider adding this if dealing with cookies or sessions
+            }
+        )
+        .then(response => {
+            console.log('Response:', response.data);
+            toast('Successfully Inserted', {
+                autoClose: 500,
+                hideProgressBar: true
+            });
+            setData([])
+            showUploadPopUp(false)
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            toast('Failed to Insert', {
+                autoClose: 500,
+                hideProgressBar: true
+            });
+        });
+  
+        console.log('submit location');
+          setShowPopup(false); // Close the popup after adding employee
+        }
+    
+      };
     
    
   return (
@@ -407,8 +456,9 @@ const getStaffDetails=()=>{
     <PopupContainer show={showUploadPopUp}>
       <AuthFormContainer>
       <div style={{alignItems:'center',justifyContent:'center',display:'flex',flexDirection:'column'}} >
-      <input type="file" style={{marginBottom:5}} onClick={handleFileUpload} />
+      <input type="file" style={{marginBottom:5}} onChange={handleFileUpload} />
         <SubmitButton style={{marginTop:5}} onClick={handleUpload}>Submit</SubmitButton>
+        {loading && <div>Uploading...</div>}
         </div>
       </AuthFormContainer>
     </PopupContainer>

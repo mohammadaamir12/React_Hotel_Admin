@@ -162,21 +162,17 @@ const getStaffDetails=()=>{
 
       const [showPopup, setShowPopup] = useState(false);
       const [showUploadPopUp,setShowUploadPopUp]=useState(false)
+      const [loading, setLoading] = useState(false);
     
       const handleAddEmployee = (e) => {
         e.preventDefault(); // Prevent form submission
-        const postData = {
-          branchId : "1a",
-                firstName : "Jason",
-                lastName : "Brown",
-                phone : "+918078607216",
-                department : "Front of House",
-                role: "Server",
-                hourlyWage : "$16",
-                hireDate : "2023-04-15"
-      };
+        const postData = {branch_id: "1",
+        staff: [
+              {first_name: firstname,   last_name :lastname, phone : phone, department : department, role : role, hourlywage : hourlyWages, hiredate : hiredate}
+                     ]
+       }
        console.log("hello");
-       axios.post('https://fl87ao683b.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-staff-cognito', postData,{
+       axios.post('https://c4cu09fxmj.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-staff', postData,{
             headers: {
               "Content-Type":'application/json',
               'Access-Control-Allow-Origin': '*',
@@ -203,6 +199,8 @@ const getStaffDetails=()=>{
         console.log('submit location');
           setShowPopup(false); // Close the popup after adding employee
         }
+
+      
 
       
      
@@ -279,6 +277,8 @@ const getStaffDetails=()=>{
       };
 
       const handleUpload = () => {
+        setLoading(true)
+        console.log();
         if (!file) {
           console.error("No file selected.");
           return;
@@ -297,16 +297,20 @@ const getStaffDetails=()=>{
           excelData.shift();
     
           const formattedData = excelData.map(row => ({
-            table_number: row[0],
-            capacity: row[1],
-            location: row[2],
-            status: row[3]
+            first_name: row[0],
+            last_name: row[1],
+            phone: row[2],
+            department: row[3],
+            role:row[4],
+            hourlywage:row[5],
+            hiredate:row[6],
           }));
     
           // Send data to the API
           setData(formattedData);
+          handleAddEmployee1()
         };
-         showUpload();
+         
         reader.readAsBinaryString(file);
       };
     
@@ -319,7 +323,46 @@ const getStaffDetails=()=>{
        console.log(data,'excel data');
         }
       } 
-     
+      const handleAddEmployee1 = (e) => {
+        console.log(data,'aamir');
+        const postData = {branch_id: "1",
+        "staff":data
+       }
+        if (data!=='') {
+          axios.post(
+            'https://c4cu09fxmj.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-staff',
+            postData,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    // Remove Access-Control headers from client request
+                },
+                withCredentials: true, // Consider adding this if dealing with cookies or sessions
+            }
+        )
+        .then(response => {
+            console.log('Response:', response.data);
+            setLoading(false)
+            toast('Successfully Inserted', {
+                autoClose: 500,
+                hideProgressBar: true
+            });
+            setData([])
+            showUploadPopUp(false)
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            toast('Failed to Insert', {
+                autoClose: 500,
+                hideProgressBar: true
+            });
+        });
+  
+        console.log('submit location');
+          setShowPopup(false); // Close the popup after adding employee
+        }
+    
+      };
       
   return (
     <div>
@@ -405,7 +448,7 @@ const getStaffDetails=()=>{
     <PopupContainer show={showUploadPopUp}>
       <AuthFormContainer>
       <div style={{alignItems:'center',justifyContent:'center',display:'flex',flexDirection:'column'}} >
-      <input type="file" style={{marginBottom:5}} onClick={handleFileUpload} />
+      <input type="file" style={{marginBottom:5}} onChange={handleFileUpload} />
         <SubmitButton style={{marginTop:5}} onClick={handleUpload}>Submit</SubmitButton>
         </div>
       </AuthFormContainer>
