@@ -128,200 +128,147 @@ const TableWrapper = styled.div`
 
 
 export default function DashBoard() {
-  const [file, setFile] = useState(null);
-  const [data, setData] = useState([]);
+  
 
-  const handleFileUpload = (e) => {
-    setFile(e.target.files[0]);
+  const [employees, setEmployees] = useState([
+    { id: 1, name: 'John Doe' },
+    { id: 2, name: 'Jane Smith' },
+  ]);
+  const [newEmployeeName, setNewEmployeeName] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleAddEmployee = () => {
+    if (newEmployeeName.trim() !== '') {
+      const newEmployee = {
+        id: employees.length + 1,
+        name: newEmployeeName,
+      };
+      setEmployees([...employees, newEmployee]);
+      setNewEmployeeName('');
+      setShowPopup(false); // Close the popup after adding employee
+    }
   };
 
-  const handleUpload = () => {
-    if (!file) {
-      console.error("No file selected.");
-      return;
-    }
+  const columns = [
+    {
+      name: 'firstname',
+      label: "Name",
+      options: {
+      filter: true,
+      sort: true,
+       }},
+       {
+        name: 'department',
+        label: "Department",
+        options: {
+        filter: true,
+        sort: true,
+         }},
+         {
+          name: 'role',
+          label: "Role",
+          options: {
+          filter: true,
+          sort: true,
+           }},
+           {
+            name: 'Wages',
+            label: "Hourly Wages",
+            options: {
+            filter: true,
+            sort: true,
+             }},
+  ];
 
-    const reader = new FileReader();
-
-    reader.onload = (evt) => {
-      const bstr = evt.target.result;
-      const workbook = XLSX.read(bstr, { type: 'binary' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-      // Remove header row
-      excelData.shift();
-
-      const formattedData = excelData.map(row => ({
-        table_number: row[0],
-        capacity: row[1],
-        location: row[2],
-        status: row[3]
-      }));
-
-      // Send data to the API
-      setData(formattedData);
-    };
-
-    reader.readAsBinaryString(file);
-  };
-
-  const showUpload = () => {
-    if (data.length === 0) {
-      console.error("No data to send.");
-      return;
-    }
-    else{
-   console.log(data,'excel data');
-    }
-  }
-
-//   const [employees, setEmployees] = useState([
-//     { id: 1, name: 'John Doe' },
-//     { id: 2, name: 'Jane Smith' },
-//   ]);
-//   const [newEmployeeName, setNewEmployeeName] = useState('');
-//   const [showPopup, setShowPopup] = useState(false);
-
-//   const handleAddEmployee = () => {
-//     if (newEmployeeName.trim() !== '') {
-//       const newEmployee = {
-//         id: employees.length + 1,
-//         name: newEmployeeName,
-//       };
-//       setEmployees([...employees, newEmployee]);
-//       setNewEmployeeName('');
-//       setShowPopup(false); // Close the popup after adding employee
-//     }
-//   };
-
-//   const columns = [
-//     {
-//       name: 'firstname',
-//       label: "Name",
-//       options: {
-//       filter: true,
-//       sort: true,
-//        }},
-//        {
-//         name: 'department',
-//         label: "Department",
-//         options: {
-//         filter: true,
-//         sort: true,
-//          }},
-//          {
-//           name: 'role',
-//           label: "Role",
-//           options: {
-//           filter: true,
-//           sort: true,
-//            }},
-//            {
-//             name: 'Wages',
-//             label: "Hourly Wages",
-//             options: {
-//             filter: true,
-//             sort: true,
-//              }},
-//   ];
-
-//   const data = [
-//   	{
-// 		id: 1,
-// 		firstname: 'Beetlejuice',
-//     lastname:'Yadav',
-//     department:'Housing',
-//     role:'Cleaner',
-//     Wages:'2000',
-// 	},
-// 	{
-// 		id: 1,
-// 		firstname: 'Aamir',
-//     lastname:'Khan',
-//     department:'Developer',
-//     role:'React Native',
-//     Wages:'3000',
-// 	},
-// ]
-// const options = {
-//   filterType: 'checkbox',
-//   selectableRows:false,
-// };
+  const data = [
+  	{
+		id: 1,
+		firstname: 'Beetlejuice',
+    lastname:'Yadav',
+    department:'Housing',
+    role:'Cleaner',
+    Wages:'2000',
+	},
+	{
+		id: 1,
+		firstname: 'Aamir',
+    lastname:'Khan',
+    department:'Developer',
+    role:'React Native',
+    Wages:'3000',
+	},
+]
+const options = {
+  filterType: 'checkbox',
+  selectableRows:false,
+};
   
   
   return (
-    // <div>
-    //   <Wrapper blur={showPopup}>
-    //     <BoxContainer>
-    //       <EmployeeList>
-    //         <TableWrapper>
-    //       <MUIDataTable
-		// 	columns={columns}
-		// 	data={data}
-    //   options={options}
-		// />
-    // </TableWrapper>
-    //       </EmployeeList>
-    //       <AddButton onClick={() => setShowPopup(true)}>Add Employee</AddButton>
-    //     </BoxContainer>
-    //   </Wrapper>
-    //   <Overlay show={showPopup} onClick={() => setShowPopup(false)} />
-    //   <PopupContainer show={showPopup}>
-    //     <AuthFormContainer>
-    //       <form>
-    //         <FormGroup>
-    //           <label>First Name</label>
-    //           <FormControl
-    //             type="text"
-    //             placeholder="eg:-Mohit"
-    //             value={newEmployeeName}
-    //             onChange={(e) => setNewEmployeeName(e.target.value)}
-    //           />
-    //         </FormGroup>
-    //         <FormGroup>
-    //           <label>Last Name</label>
-    //           <FormControl type="text" placeholder="eg:-Mathur" />
-    //         </FormGroup>
+    <div>
+      <Wrapper blur={showPopup}>
+        <BoxContainer>
+          <EmployeeList>
+            <TableWrapper>
+          <MUIDataTable
+			columns={columns}
+			data={data}
+      options={options}
+		/>
+    </TableWrapper>
+          </EmployeeList>
+          <AddButton onClick={() => setShowPopup(true)}>Add Employee</AddButton>
+        </BoxContainer>
+      </Wrapper>
+      <Overlay show={showPopup} onClick={() => setShowPopup(false)} />
+      <PopupContainer show={showPopup}>
+        <AuthFormContainer>
+          <form>
+            <FormGroup>
+              <label>First Name</label>
+              <FormControl
+                type="text"
+                placeholder="eg:-Mohit"
+                value={newEmployeeName}
+                onChange={(e) => setNewEmployeeName(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <label>Last Name</label>
+              <FormControl type="text" placeholder="eg:-Mathur" />
+            </FormGroup>
             
-    //         <FormGroup>
-    //           <label>Department</label>
-    //           <FormControl type="text" placeholder="eg:-Housing" />
-    //         </FormGroup>
+            <FormGroup>
+              <label>Department</label>
+              <FormControl type="text" placeholder="eg:-Housing" />
+            </FormGroup>
             
-    //         <FormGroup>
-    //           <label>Employee Role</label>
-    //           <FormControl type="text" placeholder="eg:-Mathur" />
-    //         </FormGroup>
+            <FormGroup>
+              <label>Employee Role</label>
+              <FormControl type="text" placeholder="eg:-Mathur" />
+            </FormGroup>
             
            
-    //         <FormGroup>
-    //           <label>Hourly Wage</label>
-    //           <FormControl type="text" placeholder="eg:-250" />
-    //         </FormGroup>
-    //         <FormGroup>
-    //           <label>Mobile Otp</label>
-    //           <FormControl type="text" placeholder="eg:-250" />
-    //         </FormGroup>
+            <FormGroup>
+              <label>Hourly Wage</label>
+              <FormControl type="text" placeholder="eg:-250" />
+            </FormGroup>
+            <FormGroup>
+              <label>Mobile Otp</label>
+              <FormControl type="text" placeholder="eg:-250" />
+            </FormGroup>
             
-    //         <div
-    //           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-    //         >
-    //           <SubmitButton type="submit" onClick={handleAddEmployee}>
-    //             Submit
-    //           </SubmitButton>
-    //         </div>
-    //       </form>
-    //     </AuthFormContainer>
-    //   </PopupContainer>
-    // </div>
-    <div>
-      {/* Input element for file selection */}
-      <input type="file" onChange={handleFileUpload} />
-      {/* Button to trigger file upload */}
-      <button onClick={handleUpload}>Upload Excel</button>
-      <button onClick={showUpload}>Show Excel</button>
+            <div
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <SubmitButton type="submit" onClick={handleAddEmployee}>
+                Submit
+              </SubmitButton>
+            </div>
+          </form>
+        </AuthFormContainer>
+      </PopupContainer>
     </div>
+   
   )
 }

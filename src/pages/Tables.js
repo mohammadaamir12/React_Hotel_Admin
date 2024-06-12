@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import PrintIcon from '@mui/icons-material/UploadFile'; // Importing the print icon from MUI
 import Button from '@mui/material/Button';
 import * as XLSX from 'xlsx';
+import { Download } from '@mui/icons-material';
 
 
 const Wrapper = styled.div`
@@ -116,6 +117,7 @@ const SubmitButton = styled.button`
   border: none;
   border-radius: 5px;
   font-size: 1rem;
+  position: relative; 
   cursor: pointer;
   transition: background-color 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -256,6 +258,28 @@ const getStaffDetails=()=>{
         }
         },
       ];
+
+      const generateAndDownloadExcel = () => {
+        // Sample data, replace it with your actual data
+        const data = [
+          [ 'table_number',
+          'capacity',
+          'location',
+          'status',
+          'table_type']
+          
+        ];
+    
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    
+        XLSX.writeFile(wb, 'table_bulk_upload.xlsx');
+      
+          };
+          const SampleDownload =()=>{
+            generateAndDownloadExcel()
+          }
     
       const options = {
         filterType: 'checkbox',
@@ -265,6 +289,9 @@ const getStaffDetails=()=>{
           return (
             <div>
               {/* Default print button */}
+              <Button onClick={SampleDownload} style={{marginRight:5}} variant="contained" startIcon={<Download />} size="small">
+            Sample
+          </Button>
               <Button onClick={() =>setShowUploadPopUp(true)} variant="contained" startIcon={<PrintIcon />} size="small">
                 Upload
               </Button>
@@ -274,44 +301,51 @@ const getStaffDetails=()=>{
         }
       };
 
+
       const handleFileUpload = (e) => {
         setFile(e.target.files[0]);
       };
 
       const handleUpload = () => {
         setLoading(true)
+        
         if (!file) {
           console.error("No file selected.");
+          setLoading(false)
           return;
         }
-       setLoading(true)
-        const reader = new FileReader();
+        
+          const reader = new FileReader();
     
-        reader.onload = (evt) => {
-          const bstr = evt.target.result;
-          const workbook = XLSX.read(bstr, { type: 'binary' });
-          const sheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[sheetName];
-          const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-    
-          // Remove header row
-          excelData.shift();
-    
-          const formattedData = excelData.map(row => ({
-            table_number: row[0],
-            capacity: row[1],
-            location: row[2],
-            status: row[3],
-            table_type:row[4]
-          }));
-    
-          // Send data to the API
-          setData(formattedData);
-          setLoading(false)
-          handleAddEmployee1()
-        };
-         
-        reader.readAsBinaryString(file);
+          reader.onload = (evt) => {
+            const bstr = evt.target.result;
+            const workbook = XLSX.read(bstr, { type: 'binary' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      
+            // Remove header row
+            excelData.shift();
+      
+            const formattedData = excelData.map(row => ({
+              table_number: row[0].toString(),
+              capacity: row[1],
+              location: row[2],
+              status: row[3],
+              table_type:row[4]
+            }));
+      
+            // Send data to the API
+            setData(formattedData);
+           
+            setTimeout(()=>{
+              handleAddEmployee1()
+            },10000)
+          };
+           
+          reader.readAsBinaryString(file);
+       
+       
       };
     
       const showUpload = () => {
@@ -324,7 +358,7 @@ const getStaffDetails=()=>{
         }
       } 
       const handleAddEmployee1 = (e) => {
-        console.log(data,'aamir');
+        console.log(data[0],'aamir');
          const postData = {
            branch_id: "1",
            tables: data
@@ -347,6 +381,7 @@ const getStaffDetails=()=>{
                  autoClose: 500,
                  hideProgressBar: true
              });
+             setLoading(false)
              setData([])
              showUploadPopUp(false)
          })
@@ -356,6 +391,7 @@ const getStaffDetails=()=>{
                  autoClose: 500,
                  hideProgressBar: true
              });
+             setLoading(false)
          });
    
          console.log('submit location');
@@ -434,7 +470,32 @@ const getStaffDetails=()=>{
       <AuthFormContainer>
       <div style={{alignItems:'center',justifyContent:'center',display:'flex',flexDirection:'column'}} >
       <input type="file" style={{marginBottom:5}} onChange={handleFileUpload} />
-        <SubmitButton style={{marginTop:5}} onClick={handleUpload}>Submit</SubmitButton>
+        <SubmitButton style={{marginTop:5}} onClick={handleUpload} disabled={loading}>
+         Submit
+        {loading && (
+            <div style={{
+                width: '20px',
+                height: '20px',
+                border: '3px solid #f3f3f3', /* Light grey */
+                borderTop: '3px solid #3498db', /* Blue */
+                borderRadius: '50%',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-10px',
+                marginLeft: '-10px',
+                animation: 'spin 1s linear infinite' /* Add spinning animation */
+            }}></div>
+        )}
+    <style>
+        {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+    </style>
+        </SubmitButton>
         {loading && <div>Uploading...</div>}
         </div>
       </AuthFormContainer>

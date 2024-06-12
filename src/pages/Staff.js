@@ -7,6 +7,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import PrintIcon from '@mui/icons-material/UploadFile'; // Importing the print icon from MUI
 import Button from '@mui/material/Button';
 import * as XLSX from 'xlsx';
+import { Download } from '@mui/icons-material';
+import { saveAs } from 'file-saver';
 
 const Wrapper = styled.div`
   position: relative;
@@ -113,6 +115,7 @@ const SubmitButton = styled.button`
   border-radius: 5px;
   font-size: 1rem;
   cursor: pointer;
+  position:relative;
   transition: background-color 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
    align-self:center;
@@ -255,6 +258,30 @@ const getStaffDetails=()=>{
         },
       ];
       
+      const generateAndDownloadExcel = () => {
+    // Sample data, replace it with your actual data
+    const data = [
+      [ 'first_name',
+      'last_name',
+      'phone',
+      'department',
+      'role',
+      'hourlywage',
+      'hiredate']
+      
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    XLSX.writeFile(wb, 'staff_bulk_upload.xlsx');
+  
+      };
+      const SampleDownload =()=>{
+        generateAndDownloadExcel()
+      }
+      
       const options = {
         filterType: 'checkbox',
         selectableRows:false,
@@ -263,6 +290,9 @@ const getStaffDetails=()=>{
           return (
             <div>
               {/* Default print button */}
+              <Button onClick={SampleDownload} style={{marginRight:5}} variant="contained" startIcon={<Download />} size="small">
+            Sample
+          </Button>
               <Button onClick={() =>setShowUploadPopUp(true)} variant="contained" startIcon={<PrintIcon />} size="small">
                 Upload
               </Button>
@@ -281,10 +311,12 @@ const getStaffDetails=()=>{
         console.log();
         if (!file) {
           console.error("No file selected.");
+          setLoading(false)
           return;
+          
         }
     
-        const reader = new FileReader();
+      const reader = new FileReader();
     
         reader.onload = (evt) => {
           const bstr = evt.target.result;
@@ -308,10 +340,15 @@ const getStaffDetails=()=>{
     
           // Send data to the API
           setData(formattedData);
-          handleAddEmployee1()
+          setTimeout(()=>{
+            handleAddEmployee1()
+          },10000)
+         
         };
          
         reader.readAsBinaryString(file);
+    
+      
       };
     
       const showUpload = () => {
@@ -324,7 +361,8 @@ const getStaffDetails=()=>{
         }
       } 
       const handleAddEmployee1 = (e) => {
-        console.log(data,'aamir');
+        
+        console.log(data,'aamirkan');
         const postData = {branch_id: "1",
         "staff":data
        }
@@ -356,6 +394,7 @@ const getStaffDetails=()=>{
                 autoClose: 500,
                 hideProgressBar: true
             });
+            setLoading(false)
         });
   
         console.log('submit location');
@@ -449,7 +488,33 @@ const getStaffDetails=()=>{
       <AuthFormContainer>
       <div style={{alignItems:'center',justifyContent:'center',display:'flex',flexDirection:'column'}} >
       <input type="file" style={{marginBottom:5}} onChange={handleFileUpload} />
-        <SubmitButton style={{marginTop:5}} onClick={handleUpload}>Submit</SubmitButton>
+      <SubmitButton style={{marginTop:5}} onClick={handleUpload} disabled={loading}>
+         Submit
+        {loading && (
+            <div style={{
+                width: '20px',
+                height: '20px',
+                border: '3px solid #f3f3f3', /* Light grey */
+                borderTop: '3px solid #3498db', /* Blue */
+                borderRadius: '50%',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-10px',
+                marginLeft: '-10px',
+                animation: 'spin 1s linear infinite' /* Add spinning animation */
+            }}></div>
+        )}
+    <style>
+        {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+    </style>
+        </SubmitButton>
+        {loading && <div>Uploading...</div>}
         </div>
       </AuthFormContainer>
     </PopupContainer>
