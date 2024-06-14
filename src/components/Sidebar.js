@@ -233,6 +233,42 @@ export default function Sidebar({setMenuOpen,setDarkMode,darkMode,menuOpen}) {
         <ArrowRight/>
       </Elements>
       </Link>
+      <Link to={'/customer'}
+      onClick={() => handleSetActive('Customer')}
+      style={{textDecoration:'none',color:'#c9c9c9',width:'90%' }}>
+      <Elements style={{ backgroundColor: activeLink === 'Customer' ? '#5894f5' : 'transparent',borderRadius:5,width:'85%',marginLeft:2  }}>
+        <Print />
+        <NavText>Customer</NavText>
+        <ArrowRight/>
+      </Elements>
+      </Link>
+      <Link to={'/menu'}
+      onClick={() => handleSetActive('Menus')}
+      style={{textDecoration:'none',color:'#c9c9c9',width:'90%' }}>
+      <Elements style={{ backgroundColor: activeLink === 'Menus' ? '#5894f5' : 'transparent',borderRadius:5,width:'85%',marginLeft:2  }}>
+        <Print />
+        <NavText>Menus</NavText>
+        <ArrowRight/>
+      </Elements>
+      </Link>
+      <Link to={'/feedback'}
+      onClick={() => handleSetActive('Feedback')}
+      style={{textDecoration:'none',color:'#c9c9c9',width:'90%' }}>
+      <Elements style={{ backgroundColor: activeLink === 'Feedback' ? '#5894f5' : 'transparent',borderRadius:5,width:'85%',marginLeft:2  }}>
+        <Print />
+        <NavText>Feedback</NavText>
+        <ArrowRight/>
+      </Elements>
+      </Link>
+      <Link to={'/reservation'}
+      onClick={() => handleSetActive('Reservation')}
+      style={{textDecoration:'none',color:'#c9c9c9',width:'90%' }}>
+      <Elements style={{ backgroundColor: activeLink === 'Reservation' ? '#5894f5' : 'transparent',borderRadius:5,width:'85%',marginLeft:2  }}>
+        <Print />
+        <NavText>Customer Reservation</NavText>
+        <ArrowRight/>
+      </Elements>
+      </Link>
       <a
     href="https://public.tableau.com/app/profile/mridul.miglani/viz/Dashboard_17160211508670/SalesAnalytics"
     onClick={(e) => {

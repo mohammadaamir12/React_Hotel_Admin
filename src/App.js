@@ -23,6 +23,11 @@ import Orders from './pages/Orders';
 import Login from './pages/Login';
 import GlobalStyle from './pages/Global';
 import Report from './pages/Report';
+import Customer from './pages/Customer';
+import Menu from './pages/Menu';
+import CustomerReservation from './pages/CustomerReservation';
+import Feedback from './pages/Feedback';
+
 
 const Container=styled.div`
 background:${({theme})=> theme.bg};
@@ -72,6 +77,11 @@ function App() {
     <Route path='/visits'  element={isAuth ? <Visits /> : <Navigate to="/login" />} />
     <Route path='/orders'  element={isAuth ? <Orders /> : <Navigate to="/login" />} />
     <Route path='/report'  element={isAuth ? <Report /> : <Navigate to="/login" />} />
+    <Route path='/customer'  element={isAuth ? <Customer /> : <Navigate to="/login" />} />
+    <Route path='/menu'  element={isAuth ? <Menu /> : <Navigate to="/login" />} />
+    <Route path='/reservation'  element={isAuth ? <CustomerReservation /> : <Navigate to="/login" />} />
+    <Route path='/feedback'  element={isAuth ? <Feedback /> : <Navigate to="/login" />} />
+   
     
     
    </Routes>

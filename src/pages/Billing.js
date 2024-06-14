@@ -4,6 +4,8 @@ import DataTable from 'react-data-table-component';
 import MUIDataTable from 'mui-datatables';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Wrapper = styled.div`
   position: relative;
@@ -132,8 +134,8 @@ export default function Billing() {
   const [secondShowPopup, setSecondShowPopup] = useState(false);
   const [getData,setGetData]=useState([])
   const [data,setData]=useState([])
-  const [startDate,setStartDate]=useState('')
-  const [endDate,setEndDate]=useState('')
+  const [startDate,setStartDate]=useState(null)
+  const [endDate,setEndDate]=useState(null)
   useEffect(()=>{
     getStaffDetails();
      },[])
@@ -164,7 +166,7 @@ rowsPerPageOptions: [],
 filter: true,
 customFilterDialogFooter: () => (
   <div onClick={() => handleFilterButtonClick()}>
-  <button>Filter Button</button>
+  <button style={{background: '#007bff', color: 'white', padding:4, borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 16}}>Filter Button</button>
 </div>
 )
   };
@@ -174,17 +176,21 @@ customFilterDialogFooter: () => (
    
   };
 
-  const handleFilterEmployee=()=>{
+  const handleFilterEmployee=(e)=>{
+    e.preventDefault(); 
     axios.get('https://1inwmj2h77.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-billing', {
        params: {
          branch_id:1,
-         start_date:'2024-05-20',
-         end_date:'2024-05-30'
+         start_date:startDate,
+         end_date:endDate
        }
      })
      .then(function (response) {
-       // console.log(response.data);
+       console.log(response.data);
        setData(response.data);
+       setStartDate('')
+       setEndDate('')
+       setSecondShowPopup(false)
      })
      .catch(function (error) {
        console.log(error);
@@ -261,7 +267,7 @@ customFilterDialogFooter: () => (
                 <TableWrapper>
               <MUIDataTable
                 columns={columns}
-                data={getData}
+                data={data}
           options={options}
             />
             </TableWrapper>
@@ -317,28 +323,31 @@ customFilterDialogFooter: () => (
           <PopupContainer show={secondShowPopup}>
         <AuthFormContainer>
           <form>
-          <FormGroup>
-                  <label>Start Date</label>
-                  <FormControl
-                    type="text"
-                    placeholder="2022-23-01"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <label>End Date</label>
-                  <FormControl type="text" placeholder="2024-02-01" 
-                   value={endDate}
-                   onChange={(e) => setEndDate(e.target.value)}
-                  />
+            <FormGroup style={{ display: 'flex', flexDirection: 'column' }}>
+              <label>Start Date</label>
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select end date"
+              />
+            </FormGroup>
+            <FormGroup style={{ display: 'flex', flexDirection: 'column' }}>
+              <label>End Date</label>
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select end date"
+                minDate={startDate || undefined}
+              />
 
-                </FormGroup>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-  <SubmitButton type="submit" onClick={handleFilterEmployee}>
-    Search
-  </SubmitButton>
-</div>
+            </FormGroup>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <SubmitButton type="submit" onClick={handleFilterEmployee}>
+                Search
+              </SubmitButton>
+            </div>
           </form>
         </AuthFormContainer>
       </PopupContainer>

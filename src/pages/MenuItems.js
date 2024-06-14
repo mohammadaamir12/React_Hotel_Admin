@@ -361,7 +361,7 @@ const getStaffDetails=()=>{
         const postData = {menu_id: "1",
         items:data
        }
-        if (data!=='') {
+        if (data !== null && data.length > 0) {
           axios.post(
             'https://hv3fnqiy9a.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-menu_items',
             postData,
@@ -394,6 +394,12 @@ const getStaffDetails=()=>{
   
         console.log('submit location');
           setShowPopup(false); // Close the popup after adding employee
+        }
+        else{
+          toast('Failed to Upload', {
+            autoClose: 500,
+            hideProgressBar: true
+        });
         }
     
       };
