@@ -285,7 +285,7 @@ const getStaffDetails=()=>{
       const options = {
         filterType: 'checkbox',
         selectableRows:false,
-        rowsPerPage:4,
+        rowsPerPage:3,
         customToolbar: () => {
           return (
             <div>
@@ -364,7 +364,7 @@ const getStaffDetails=()=>{
         
         console.log(data,'aamirkan');
         const postData = {branch_id: "1",
-        "staff":data
+        staff:data
        }
         if (data!=='') {
           axios.post(
