@@ -6,6 +6,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css';
+import { DateRangePicker } from 'react-date-range';
+import { CalendarMonth, CleanHands, Clear, Filter } from '@mui/icons-material';
+import PrintIcon from '@mui/icons-material/UploadFile'; // Importing the print icon from MUI
+import Button from '@mui/material/Button';
 
 
 
@@ -127,7 +133,7 @@ const TableWrapper = styled.div`
   
   max-width: 100%;
   overflow-x: auto;
- 
+  height: calc(100vh - 240px);
 `;
 
 export default function Orders() {
@@ -136,12 +142,22 @@ export default function Orders() {
   const [data, setData] = useState([])
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
+  const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState([
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
   ]);
+  const [date,setDate]=useState({
+    startDate: new Date(),
+      endDate: new Date(),
+      key: 'selection',
+  })
   const [newEmployeeName, setNewEmployeeName] = useState('');
   const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(()=>{
+handleFilterEmployee()
+  },[])
 
   const handleAddEmployee = () => {
     if (newEmployeeName.trim() !== '') {
@@ -168,21 +184,36 @@ export default function Orders() {
       <div onClick={() => handleFilterButtonClick()}>
         <button style={{ background: '#007bff', color: 'white', padding: 4, borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 16 }}>Filter Button</button>
       </div>
-    )
+    ),
+    customToolbar: () => {
+      return (
+        <div>
+          {/* Default print button */}
+          <Button onClick={()=>setSecondShowPopup(true)} style={{marginRight:5}} variant="contained" startIcon={<CalendarMonth />} size="small">
+        Filter
+      </Button>
+          <Button onClick={clearDateRange} variant="contained" startIcon={<Clear />} size="small">
+            Clear
+          </Button>
+         
+        </div>
+      );
+    }
   };
 
   const handleFilterButtonClick = () => {
     setSecondShowPopup(true)
 
-  };
+  }
 
   const handleFilterEmployee = (e) => {
-    e.preventDefault();
+    console.log(setDate);
+   setLoading(true)
     axios.get('https://hu3r9jloh4.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-orders', {
       params: {
         branch_id: 1,
-        start_date: startDate,
-        end_date: endDate
+        start_date: '2024-05-31',
+        end_date: '2024-06-18'
       }
     })
       .then(function (response) {
@@ -191,6 +222,7 @@ export default function Orders() {
         setStartDate(null)
         setEndDate(null)
         setSecondShowPopup(false)
+        setLoading(false)
       })
       .catch(function (error) {
         console.log(error);
@@ -199,31 +231,16 @@ export default function Orders() {
 
   const columns = [
     {
-      name: 'categoryid',
-      label: "Category ID",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-
-    {
-      name: 'menu_items',
-      label: "Item ID",
+      name: 'orderid',
+      label: "Order ID",
       options: {
         filter: false,
         sort: true,
-        customBodyRender: (value) => (
-          <ul>
-            {value.map(category => (
-              <li key={category.item_id}>{category.item_id}</li>
-            ))}
-          </ul>
-        )
+       
       }
     },
     {
-      name: 'menu_items',
+      name: 'items',
       label: "Item Name",
       options: {
         filter: false,
@@ -231,16 +248,70 @@ export default function Orders() {
         customBodyRender: (value) => (
           <ul>
             {value.map(category => (
-              <li key={category.item_name}>{category.item_name}</li>
+              <li key={category.items}>{category.itemid}</li>
             ))}
           </ul>
         )
       }
     },
-
+    {
+      name: 'items',
+      label: "Item Name",
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (value) => (
+          <ul>
+            {value.map(category => (
+              <li key={category.items}>{category.item_name}</li>
+            ))}
+          </ul>
+        )
+      }
+    },
+    {
+      name: 'items',
+      label: "Quantity",
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (value) => (
+          <ul>
+            {value.map(category => (
+              <li key={category.items}>{category.quantity}</li>
+            ))}
+          </ul>
+        )
+      }
+    },
+    {
+      name: 'items',
+      label: "Status",
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (value) => (
+          <ul>
+            {value.map(category => (
+              <li key={category.items}>{category.item_status}</li>
+            ))}
+          </ul>
+        )
+      }
+    },
   ];
 
+const handleDateChange=(ranges)=>{
+  setDate(ranges.selection)
+}
 
+const clearDateRange = () => {
+  setDate({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection',
+  });
+};
 
   return (
     <div>
@@ -253,6 +324,31 @@ export default function Orders() {
                 data={data}
                 options={options}
               />
+                {loading && (
+      <div
+        style={{
+          width: '20px',
+          height: '20px',
+          border: '3px solid #f3f3f3', /* Light grey */
+          borderTop: '3px solid #3498db', /* Blue */
+          borderRadius: '50%',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          marginTop: '-10px',
+          marginLeft: '-10px',
+          animation: 'spin 1s linear infinite' /* Add spinning animation */
+        }}
+      ></div>
+    )}
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}
+    </style>
             </TableWrapper>
           </EmployeeList>
           <AddButton onClick={() => setShowPopup(true)}>Add Bill</AddButton>
@@ -304,35 +400,21 @@ export default function Orders() {
         </AuthFormContainer>
       </PopupContainer>
       <PopupContainer show={secondShowPopup}>
-        <AuthFormContainer>
-          <form>
-            <FormGroup style={{ display: 'flex', flexDirection: 'column' }}>
-              <label>Start Date</label>
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                dateFormat="yyyy-MM-dd"
-                placeholderText="Select end date"
-              />
-            </FormGroup>
-            <FormGroup style={{ display: 'flex', flexDirection: 'column' }}>
-              <label>End Date</label>
-              <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
-                dateFormat="yyyy-MM-dd"
-                placeholderText="Select end date"
-                minDate={startDate || undefined}
-              />
-
-            </FormGroup>
+      
+          
+            
+              <DateRangePicker
+        ranges={[date]}
+        onChange={handleDateChange}
+      />
+           
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <SubmitButton type="submit" onClick={handleFilterEmployee}>
                 Search
               </SubmitButton>
             </div>
-          </form>
-        </AuthFormContainer>
+         
+     
       </PopupContainer>
     </div>
   )

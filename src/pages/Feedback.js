@@ -6,6 +6,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css';
+import { DateRangePicker } from 'react-date-range';
+import PrintIcon from '@mui/icons-material/UploadFile'; // Importing the print icon from MUI
+import Button from '@mui/material/Button';
+import { CalendarMonth, CleanHands, Clear, Filter } from '@mui/icons-material';
 
 const Wrapper = styled.div`
   position: relative;
@@ -124,8 +130,8 @@ const TableWrapper = styled.div`
   
   max-width: 100%;
   overflow-x: auto;
- 
-`;
+  height: calc(100vh - 240px);
+  `;
 
 export default function Feedback() {
     const [secondShowPopup, setSecondShowPopup] = useState(false);
@@ -133,13 +139,22 @@ export default function Feedback() {
     const [data, setData] = useState([])
     const [startDate, setStartDate] = useState(null)
     const [endDate, setEndDate] = useState(null)
+    const [loading, setLoading] = useState(false);
     const [employees, setEmployees] = useState([
       { id: 1, name: 'John Doe' },
       { id: 2, name: 'Jane Smith' },
     ]);
+    const [date,setDate]=useState({
+      startDate: new Date(),
+        endDate: new Date(),
+        key: 'selection',
+    })
     const [newEmployeeName, setNewEmployeeName] = useState('');
     const [showPopup, setShowPopup] = useState(false);
-  
+  useEffect(()=>{
+  handleFilterEmployee()
+  },[])
+
     const handleAddEmployee = () => {
       if (newEmployeeName.trim() !== '') {
         const newEmployee = {
@@ -155,7 +170,7 @@ export default function Feedback() {
     const options = {
       filterType: 'checkbox',
       selectableRows: false,
-      rowsPerPage: 2,
+      rowsPerPage: 4,
       elevation: 0,
       // 
       pagination: true,
@@ -165,7 +180,21 @@ export default function Feedback() {
         <div onClick={() => handleFilterButtonClick()}>
           <button style={{ background: '#007bff', color: 'white', padding: 4, borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 16 }}>Filter Button</button>
         </div>
-      )
+      ),
+      customToolbar: () => {
+        return (
+          <div>
+            {/* Default print button */}
+            <Button onClick={()=>setSecondShowPopup(true)} style={{marginRight:5}} variant="contained" startIcon={<CalendarMonth />} size="small">
+          Filter
+        </Button>
+            <Button onClick={clearDateRange} variant="contained" startIcon={<Clear />} size="small">
+              Clear
+            </Button>
+           
+          </div>
+        );
+      }
     };
   
     const handleFilterButtonClick = () => {
@@ -174,12 +203,12 @@ export default function Feedback() {
     };
   
     const handleFilterEmployee = (e) => {
-      e.preventDefault();
+    setLoading(true)
       axios.get('https://fgha1l2pic.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-feedback', {
         params: {
           branch_id: 1,
-          start_date: startDate,
-          end_date: endDate
+          start_date: "2024-05-01",
+          end_date: "2024-06-18"
         }
       })
         .then(function (response) {
@@ -188,6 +217,7 @@ export default function Feedback() {
           setStartDate(null)
           setEndDate(null)
           setSecondShowPopup(false)
+          setLoading(false)
         })
         .catch(function (error) {
           console.log(error);
@@ -196,46 +226,59 @@ export default function Feedback() {
   
     const columns = [
       {
-        name: 'categoryid',
-        label: "Category ID",
+        name: 'feedbackid',
+        label: "Feedback ID",
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
+        name: 'service_rating',
+        label: "Service Rating",
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
+        name: 'food_rating',
+        label: "Food Rating",
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
+        name: 'customer_rating',
+        label: "Customer Rating",
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
+        name: 'comments',
+        label: "Comments",
         options: {
           filter: true,
           sort: true,
         }
       },
   
-      {
-        name: 'menu_items',
-        label: "Item ID",
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => (
-            <ul>
-              {value.map(category => (
-                <li key={category.item_id}>{category.item_id}</li>
-              ))}
-            </ul>
-          )
-        }
-      },
-      {
-        name: 'menu_items',
-        label: "Item Name",
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => (
-            <ul>
-              {value.map(category => (
-                <li key={category.item_name}>{category.item_name}</li>
-              ))}
-            </ul>
-          )
-        }
-      },
-  
+     
     ];
+    const handleDateChange=(ranges)=>{
+      setDate(ranges.selection)
+    }
+
+    const clearDateRange = () => {
+      setDate({
+        startDate: new Date(),
+        endDate: new Date(),
+        key: 'selection',
+      });
+    };
   
   
   
@@ -250,6 +293,31 @@ export default function Feedback() {
                   data={data}
                   options={options}
                 />
+                  {loading && (
+      <div
+        style={{
+          width: '20px',
+          height: '20px',
+          border: '3px solid #f3f3f3', /* Light grey */
+          borderTop: '3px solid #3498db', /* Blue */
+          borderRadius: '50%',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          marginTop: '-10px',
+          marginLeft: '-10px',
+          animation: 'spin 1s linear infinite' /* Add spinning animation */
+        }}
+      ></div>
+    )}
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}
+    </style>
               </TableWrapper>
             </EmployeeList>
             <AddButton onClick={() => setShowPopup(true)}>Add Bill</AddButton>
@@ -301,36 +369,22 @@ export default function Feedback() {
           </AuthFormContainer>
         </PopupContainer>
         <PopupContainer show={secondShowPopup}>
-          <AuthFormContainer>
-            <form>
-              <FormGroup style={{ display: 'flex', flexDirection: 'column' }}>
-                <label>Start Date</label>
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  placeholderText="Select end date"
-                />
-              </FormGroup>
-              <FormGroup style={{ display: 'flex', flexDirection: 'column' }}>
-                <label>End Date</label>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  placeholderText="Select end date"
-                  minDate={startDate || undefined}
-                />
-  
-              </FormGroup>
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <SubmitButton type="submit" onClick={handleFilterEmployee}>
-                  Search
-                </SubmitButton>
-              </div>
-            </form>
-          </AuthFormContainer>
-        </PopupContainer>
+      
+          
+            
+              <DateRangePicker
+        ranges={[date]}
+        onChange={handleDateChange}
+      />
+           
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <SubmitButton type="submit" onClick={handleFilterEmployee}>
+                Search
+              </SubmitButton>
+            </div>
+         
+     
+      </PopupContainer>
       </div>
     )
   }

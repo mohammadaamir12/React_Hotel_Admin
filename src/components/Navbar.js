@@ -120,7 +120,7 @@ export default function Navbar({menuOpen,setMenuOpen,setDarkMode,darkMode,setAut
         <IcoButton onClick={()=>setMenuOpen(!menuOpen)}>
        {menuOpen==true?<MenuOpen/>:<Menu />} 
         </IcoButton>
-        <h2 style={{marginRight:'15%',marginLeft:10}}>Dashboard</h2>
+        <h2 style={{marginRight:'15%',marginLeft:10}}>Molecule</h2>
         <CustomTextField
       variant="outlined"
       placeholder="Search..."
