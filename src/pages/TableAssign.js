@@ -122,16 +122,19 @@ const TableWrapper = styled.div`
   
   max-width: 100%;
   overflow-x: auto;
+  height: calc(100vh - 240px);
  
 `;
 
 export default function TableAssign() {
   const [getData,setGetData]=useState([])
+  const [loading, setLoading] = useState(false);
   useEffect(()=>{
  getStaffDetails();
   },[])
 
 const getStaffDetails=()=>{
+  setLoading(true)
   axios.get('https://bb5csfacml.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-tables-assign', {
     params: {
       branch_id:1
@@ -140,6 +143,7 @@ const getStaffDetails=()=>{
   .then(function (response) {
     // console.log(response.data);
     setGetData(response.data);
+    setLoading(false)
   })
   .catch(function (error) {
     console.log(error);
@@ -229,6 +233,31 @@ return (
       data={getData}
      options={options}
   />
+  {loading && (
+      <div
+        style={{
+          width: '20px',
+          height: '20px',
+          border: '3px solid #f3f3f3', /* Light grey */
+          borderTop: '3px solid #3498db', /* Blue */
+          borderRadius: '50%',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          marginTop: '-10px',
+          marginLeft: '-10px',
+          animation: 'spin 1s linear infinite' /* Add spinning animation */
+        }}
+      ></div>
+    )}
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}
+    </style>
   </TableWrapper>
     </EmployeeList>
     <AddButton onClick={() => setShowPopup(true)}>Assign Table</AddButton>

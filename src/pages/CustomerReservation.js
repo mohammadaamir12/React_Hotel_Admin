@@ -134,6 +134,7 @@ export default function CustomerReservation() {
     const [data, setData] = useState([])
     const [startDate, setStartDate] = useState(null)
     const [endDate, setEndDate] = useState(null)
+    const [loading, setLoading] = useState(false);
     const [employees, setEmployees] = useState([
       { id: 1, name: 'John Doe' },
       { id: 2, name: 'Jane Smith' },
@@ -175,6 +176,7 @@ export default function CustomerReservation() {
     };
   
     const handleFilterEmployee = (e) => {
+      setLoading(true)
       e.preventDefault();
       axios.get('https://j87q5e4v2m.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-customerReservations', {
         params: {
@@ -189,6 +191,7 @@ export default function CustomerReservation() {
           setStartDate(null)
           setEndDate(null)
           setSecondShowPopup(false)
+          setLoading(false)
         })
         .catch(function (error) {
           console.log(error);
@@ -251,6 +254,31 @@ export default function CustomerReservation() {
                   data={data}
                   options={options}
                 />
+                {loading && (
+      <div
+        style={{
+          width: '20px',
+          height: '20px',
+          border: '3px solid #f3f3f3', /* Light grey */
+          borderTop: '3px solid #3498db', /* Blue */
+          borderRadius: '50%',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          marginTop: '-10px',
+          marginLeft: '-10px',
+          animation: 'spin 1s linear infinite' /* Add spinning animation */
+        }}
+      ></div>
+    )}
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}
+    </style>
               </TableWrapper>
             </EmployeeList>
             <AddButton onClick={() => setShowPopup(true)}>Add Bill</AddButton>

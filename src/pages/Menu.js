@@ -142,11 +142,14 @@ export default function Menu() {
     const [status,setStatus]=useState('')
     const [data,setData]=useState([])
     const [file,setFile]=useState(null)
+    const [loading, setLoading] = useState(false);
+    
     useEffect(()=>{
    getStaffDetails();
     },[])
   
   const getStaffDetails=()=>{
+    setLoading(true)
     axios.get('https://mogy5y6i7k.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-menus', {
       params: {
         branch_id:1
@@ -155,6 +158,7 @@ export default function Menu() {
     .then(function (response) {
       // console.log(response.data);
       setGetData(response.data);
+      setLoading(false)
     })
     .catch(function (error) {
       console.log(error);
@@ -167,7 +171,7 @@ export default function Menu() {
         const [newEmployeeName, setNewEmployeeName] = useState('');
         const [showPopup, setShowPopup] = useState(false);
         const [showUploadPopUp,setShowUploadPopUp]=useState(false)
-        const [loading, setLoading] = useState(false);
+      
     
         const handleAddEmployee = (e) => {
          
@@ -417,6 +421,31 @@ export default function Menu() {
               options={options}
               
             />
+            {loading && (
+      <div
+        style={{
+          width: '20px',
+          height: '20px',
+          border: '3px solid #f3f3f3', /* Light grey */
+          borderTop: '3px solid #3498db', /* Blue */
+          borderRadius: '50%',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          marginTop: '-10px',
+          marginLeft: '-10px',
+          animation: 'spin 1s linear infinite' /* Add spinning animation */
+        }}
+      ></div>
+    )}
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}
+    </style>
             
           
         </TableWrapper>

@@ -130,6 +130,7 @@ const TableWrapper = styled.div`
   
   max-width: 100%;
   overflow-x: auto;
+  height: calc(100vh - 240px);
  
 `;
 
@@ -143,11 +144,13 @@ export default function MenuItems() {
   const [taxID,setTaxID]=useState('')
   const [data,setData]=useState([])
   const [file,setFile]=useState(null)
+  const [loading, setLoading] = useState(false);
   useEffect(()=>{
  getStaffDetails();
   },[])
 
 const getStaffDetails=()=>{
+  setLoading(true)
   axios.get('https://m3gr2x1eng.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-menuItems', {
     params: {
       branch_id:1
@@ -156,6 +159,7 @@ const getStaffDetails=()=>{
   .then(function (response) {
     // console.log(response.data);
     setGetData(response.data);
+    setLoading(false)
   })
   .catch(function (error) {
     console.log(error);
@@ -168,7 +172,7 @@ const getStaffDetails=()=>{
       const [newEmployeeName, setNewEmployeeName] = useState('');
       const [showPopup, setShowPopup] = useState(false);
       const [showUploadPopUp,setShowUploadPopUp]=useState(false)
-      const [loading, setLoading] = useState(false);
+      
   
       const handleAddEmployee = (e) => {
        
@@ -419,6 +423,31 @@ const getStaffDetails=()=>{
             options={options}
             
           />
+          {loading && (
+      <div
+        style={{
+          width: '20px',
+          height: '20px',
+          border: '3px solid #f3f3f3', /* Light grey */
+          borderTop: '3px solid #3498db', /* Blue */
+          borderRadius: '50%',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          marginTop: '-10px',
+          marginLeft: '-10px',
+          animation: 'spin 1s linear infinite' /* Add spinning animation */
+        }}
+      ></div>
+    )}
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}
+    </style>
           
         
       </TableWrapper>

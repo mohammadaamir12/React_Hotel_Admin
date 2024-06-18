@@ -129,6 +129,7 @@ export default function Visits() {
   ]);
   const [newEmployeeName, setNewEmployeeName] = useState('');
   const [showPopup, setShowPopup] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleAddEmployee = () => {
     if (newEmployeeName.trim() !== '') {

@@ -95,6 +95,8 @@ export default function Sidebar({setMenuOpen,setDarkMode,darkMode,menuOpen}) {
   const handleSetActive = (link) => {
     setActiveLink(link);
   };
+
+ 
   return (
     <Menucontainer menuOpen={menuOpen}>
         <Flex>
@@ -245,7 +247,7 @@ export default function Sidebar({setMenuOpen,setDarkMode,darkMode,menuOpen}) {
       <Link to={'/menu'}
       onClick={() => handleSetActive('Menus')}
       style={{textDecoration:'none',color:'#c9c9c9',width:'90%' }}>
-      <Elements style={{ backgroundColor: activeLink === 'Menus' ? '#5894f5' : 'transparent',borderRadius:5,width:'85%',marginLeft:2  }}>
+      <Elements style={{ backgroundColor: activeLink === 'Menus' ? '#5894f5' : 'transparent',borderRadius:5,width:'85%',marginLeft:2,transition: 'background-color 0.3s ease'}} >
         <Print />
         <NavText>Menus</NavText>
         <ArrowRight/>

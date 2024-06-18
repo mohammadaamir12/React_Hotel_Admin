@@ -14,5 +14,5 @@ export const lightTheme={
     primary:'#5894f5',
     text_Primary:'#111111',
     text_Seccond:'#48494a',
-    white:'#5894f5'
+    white:'#7e7f80'
 }

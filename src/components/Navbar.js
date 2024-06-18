@@ -1,6 +1,6 @@
 import {Menu,MenuOpen,Search, LightMode, NotificationImportant, Message, DarkMode, Logout} from '@mui/icons-material';
 
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import styled from 'styled-components'
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -120,7 +120,7 @@ export default function Navbar({menuOpen,setMenuOpen,setDarkMode,darkMode,setAut
         <IcoButton onClick={()=>setMenuOpen(!menuOpen)}>
        {menuOpen==true?<MenuOpen/>:<Menu />} 
         </IcoButton>
-        <h2 style={{marginRight:'15%',marginLeft:10}}>DashBoard</h2>
+        <h2 style={{marginRight:'15%',marginLeft:10}}>Dashboard</h2>
         <CustomTextField
       variant="outlined"
       placeholder="Search..."
@@ -134,6 +134,7 @@ export default function Navbar({menuOpen,setMenuOpen,setDarkMode,darkMode,setAut
         ),
       }}
     />
+    {/* <h2 style={{flex:1,width:'100%'}}>Molecule</h2> */}
     <Container>
         <CustomButton variant="contained" onClick={()=>setDarkMode(!darkMode)}>
          {darkMode==true?<DarkMode/>: <LightMode/>}  
