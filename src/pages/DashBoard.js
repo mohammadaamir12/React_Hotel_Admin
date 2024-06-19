@@ -151,6 +151,17 @@ export default function DashBoard() {
 
   const columns = [
     {
+      name: 'serialNumber', 
+      label: 'S.No',            
+      options: {
+        filter: false,       
+        sort: false,         
+        customBodyRenderLite: (index) => {
+          return index + 1;  
+        },
+      },
+    },
+    {
       name: 'firstname',
       label: "Name",
       options: {

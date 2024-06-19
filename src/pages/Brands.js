@@ -198,7 +198,17 @@ setLoading(true)
   };
 
   const columns = [
-    
+    {
+      name: 'serialNumber', 
+      label: 'S.No',            
+      options: {
+        filter: false,       
+        sort: false,         
+        customBodyRenderLite: (index) => {
+          return index + 1;  
+        },
+      },
+    },
     {
       name: "brandname",
       label: "Brand Name",
@@ -252,6 +262,11 @@ setLoading(true)
   const options = {
     filterType: 'checkbox',
     selectableRows:false,
+    rowsPerPage:2,
+    elevation:0,
+    // 
+    pagination: true,
+rowsPerPageOptions: [1,2],
   };
   
 return (

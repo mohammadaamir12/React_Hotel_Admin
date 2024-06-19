@@ -171,7 +171,7 @@ const getStaffDetails=()=>{
       
     
       const handleAddEmployee = (e) => {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault(); 
         const postData = {branch_id: "1",
         staff: [
               {first_name: firstname,   last_name :lastname, phone : phone, department : department, role : role, hourlywage : hourlyWages, hiredate : hiredate}
@@ -203,7 +203,7 @@ const getStaffDetails=()=>{
     });
   
         console.log('submit location');
-          setShowPopup(false); // Close the popup after adding employee
+          setShowPopup(false); 
         }
 
       
@@ -212,12 +212,15 @@ const getStaffDetails=()=>{
      
       const columns = [
         {
-          name: 'staffid',
-          label: "Staff ID",
-        options: {
-          filter: true,
-          sort: true,
-        }
+          name: 'serialNumber', 
+          label: 'S.No',            
+          options: {
+            filter: false,       
+            sort: false,         
+            customBodyRenderLite: (index) => {
+              return index + 1;  
+            },
+          },
         },
         {
           name: 'staffname',
@@ -288,6 +291,7 @@ const getStaffDetails=()=>{
       const options = {
         filterType: 'checkbox',
         selectableRows:false,
+        rowsPerPageOptions: [1,2,3],
         rowsPerPage:3,
         customToolbar: () => {
           return (
@@ -342,6 +346,7 @@ const getStaffDetails=()=>{
           }));
     
           // Send data to the API
+          
           setData(formattedData);
           setTimeout(()=>{
             handleAddEmployee1()
@@ -364,47 +369,45 @@ const getStaffDetails=()=>{
         }
       } 
       const handleAddEmployee1 = (e) => {
-        
-        console.log(data,'aamirkan');
-        const postData = {branch_id: "1",
-        staff:data
-       }
-        if (data!=='') {
-          axios.post(
-            'https://c4cu09fxmj.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-staff',
-            postData,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    // Remove Access-Control headers from client request
-                },
-                withCredentials: true, // Consider adding this if dealing with cookies or sessions
-            }
-        )
-        .then(response => {
-            console.log('Response:', response.data);
-            setLoading(false)
-            toast('Successfully Inserted', {
-                autoClose: 500,
-                hideProgressBar: true
-            });
-            setData([])
-            showUploadPopUp(false)
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            toast('Failed to Insert', {
-                autoClose: 500,
-                hideProgressBar: true
-            });
-            setLoading(false)
-        });
-  
-        console.log('submit location');
-          setShowPopup(false); // Close the popup after adding employee
-        }
+        console.log(data, 'aamirkan');
+        const postData = {
+            branch_id: "1",
+            staff: data  
+        };
     
-      };
+        if (data.length > 0) { 
+            axios.post(
+                'https://c4cu09fxmj.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-staff',
+                postData,
+               
+            )
+            .then(response => {
+                console.log('Response:', response.data);
+                setLoading(false);
+                toast('Successfully Inserted', {
+                    autoClose: 500,
+                    hideProgressBar: true
+                });
+                setData([]); 
+                showUploadPopUp(false); 
+                setShowPopup(false);  
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                toast('Failed to Insert', {
+                    autoClose: 500,
+                    hideProgressBar: true
+                });
+                setLoading(false);  
+            });
+    
+            console.log('submit location');
+        } else {
+            console.warn('Data is empty. Cannot submit.'); 
+            setLoading(false);  
+        }
+    };
+    
       
   return (
     <div>

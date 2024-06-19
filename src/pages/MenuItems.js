@@ -177,43 +177,56 @@ const getStaffDetails=()=>{
       const handleAddEmployee = (e) => {
        
         e.preventDefault(); // Prevent form submission
-        const postData ={menu_id: "1",
-        items: [
-              {category_id: "1", item_name: "Dahi ke Sholey",  description: "Hung Curd wrapped mixed with Indian Spices wrapped in bread and Deep Fried", price: 250, availability: "true", tax_id: "4", dietary_choices: {diet: "vegetarian", allergens: ["Dairy"]}}]
-             
-       }
-       console.log("hello");
-       axios.post('https://hv3fnqiy9a.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-menu_items', postData,{
-            headers: {
-              "Content-Type":'application/json',
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-              'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
-          },
-          mode: 'cors'
-          })
-    .then(response => {
-        console.log('Response:', response.data);
-        toast('Successfully Inserted',{
-          autoClose: 500,
-          hideProgressBar: true
-      })
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        toast('Failed to Insert',{
-          autoClose: 500,
-          hideProgressBar: true
-      })
-    });
-  
-        console.log('submit location');
-          setShowPopup(false);
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        
+        const raw = JSON.stringify({
+          "menu_id": "1",
+          "items": [
+            {
+              "category_id": "1",
+              "item_name": "Dah ke Sholey",
+              "description": "Hung Curd wrapped mixed with Indian Spices wrapped in bread and Deep Fried",
+              "price": 250,
+              "availability": "true",
+              "tax_id": "4",
+              "dietary_choices": {
+                "diet": "vegetarian",
+                "allergens": [
+                  "Dairy"
+                ]
+              }
+            }
+          ]
+        });
+        
+        const requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow"
+        };
+        
+        fetch("https://hv3fnqiy9a.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-menu_items", requestOptions)
+          .then((response) => response.text())
+          .then((result) => console.log(result))
+          .catch((error) => console.error(error));
       };
 
     
     
       const columns = [
+        {
+          name: 'serialNumber', 
+          label: 'S.No',            
+          options: {
+            filter: false,       
+            sort: false,         
+            customBodyRenderLite: (index) => {
+              return index + 1;  
+            },
+          },
+        },
         {
           name: 'categoryid',
           label: "Category ID",
@@ -361,20 +374,27 @@ const getStaffDetails=()=>{
       } 
 
       const handleAddEmployee1 = (e) => {
-        console.log(data,'aamir');
-        const postData = {menu_id: "1",
+      //   console.log(data,'aamir');
+      //   const postData = {menu_id: "1",
+      //   items:data
+      //  }
+      //  console.log(postData,"postdata");
+       const post = JSON.stringify({menu_id: "1",
         items:data
-       }
+       })
+       console.log(post);
         if (data !== null && data.length > 0) {
           axios.post(
             'https://hv3fnqiy9a.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-menu_items',
-            postData,
+            post,
             {
-                headers: {
-                    "Content-Type": "application/json",
-                    // Remove Access-Control headers from client request
-                },
-                withCredentials: true, // Consider adding this if dealing with cookies or sessions
+              headers: {
+                "Content-Type":'application/json',
+                'Access-Control-Allow-Origin': '*',
+                
+                'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept,Access-Control-Allow-Origin',
+                'Access-Control-Allow-Credentials': 'true'
+            },
             }
         )
         .then(response => {
@@ -404,6 +424,7 @@ const getStaffDetails=()=>{
             autoClose: 500,
             hideProgressBar: true
         });
+        setLoading(false)
         }
     
       };

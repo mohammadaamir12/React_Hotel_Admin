@@ -171,6 +171,17 @@ const getStaffDetails=()=>{
     
       const columns = [
         {
+          name: 'serialNumber', 
+          label: 'S.No',            
+          options: {
+            filter: false,       
+            sort: false,         
+            customBodyRenderLite: (index) => {
+              return index + 1;  
+            },
+          },
+        },
+        {
           name: 'menuid',
           label: "Menu ID",
           options: {

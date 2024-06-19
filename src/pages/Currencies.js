@@ -171,14 +171,25 @@ const getStaffDetails=()=>{
 
   const columns = [
     {
-      name: 'currencyid',
-      label: "Currency ID",
+      name: 'serialNumber', 
+      label: 'S.No',            
       options: {
-      filter: true,
-        sort: true,
-       
-      }
+        filter: false,       
+        sort: false,         
+        customBodyRenderLite: (index) => {
+          return index + 1;  
+        },
+      },
     },
+    // {
+    //   name: 'currencyid',
+    //   label: "Currency ID",
+    //   options: {
+    //   filter: true,
+    //     sort: true,
+       
+    //   }
+    // },
     {
       name: 'currencyname',
       label: "Currency Name",
@@ -211,7 +222,10 @@ const getStaffDetails=()=>{
   const options = {
     filterType: 'checkbox',
     selectableRows:false,
-    rowsPerPage:2
+    rowsPerPage:2,
+    pagination: true,
+    rowsPerPageOptions: [1,2]
+    
   };
   
 return (

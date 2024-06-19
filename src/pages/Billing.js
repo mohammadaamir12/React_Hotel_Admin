@@ -141,13 +141,15 @@ export default function Billing() {
      },[])
    
    const getStaffDetails=()=>{
-     axios.get('https://m3gr2x1eng.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-menuItems', {
+     axios.get('https://1inwmj2h77.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-billing', {
        params: {
-         branch_id:1
+         branch_id:1,
+         start_date:"2024-05-01",
+         end_date:"2024-06-19"
        }
      })
      .then(function (response) {
-       // console.log(response.data);
+       console.log(response.data);
        setGetData(response.data);
      })
      .catch(function (error) {
@@ -162,7 +164,7 @@ export default function Billing() {
     elevation:0,
     // 
     pagination: true,
-rowsPerPageOptions: [], 
+rowsPerPageOptions: [1,2], 
 filter: true,
 customFilterDialogFooter: () => (
   <div onClick={() => handleFilterButtonClick()}>
@@ -176,8 +178,9 @@ customFilterDialogFooter: () => (
    
   };
 
+
   const handleFilterEmployee=(e)=>{
-    e.preventDefault(); 
+    // e.preventDefault(); 
     axios.get('https://1inwmj2h77.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-get-billing', {
        params: {
          branch_id:1,
@@ -199,29 +202,17 @@ customFilterDialogFooter: () => (
 
   const columns = [
     {
-      name: 'categoryid',
-      label: "Category ID",
+      name: 'serialNumber', 
+      label: 'S.No',            
       options: {
-        filter: true,
-        sort: true,
-      }
+        filter: false,       
+        sort: false,         
+        customBodyRenderLite: (index) => {
+          return index + 1;  
+        },
+      },
     },
    
-    {
-      name: 'menu_items',
-      label: "Item ID",
-      options: {
-        filter: false,
-        sort: true,
-        customBodyRender: (value) => (
-          <ul>
-            {value.map(category => (
-              <li key={category.item_id}>{category.item_id}</li>
-            ))}
-          </ul>
-        )
-      }
-    },
     {
       name: 'menu_items',
       label: "Item Name",

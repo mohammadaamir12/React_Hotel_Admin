@@ -172,9 +172,10 @@ export default function Feedback() {
       selectableRows: false,
       rowsPerPage: 4,
       elevation: 0,
+      rowsPerPageOptions:[1,2,3,4],
       // 
       pagination: true,
-      rowsPerPageOptions: [],
+      
       filter: true,
       customFilterDialogFooter: () => (
         <div onClick={() => handleFilterButtonClick()}>
@@ -226,12 +227,15 @@ export default function Feedback() {
   
     const columns = [
       {
-        name: 'feedbackid',
-        label: "Feedback ID",
+        name: 'serialNumber', 
+        label: 'S.No',            
         options: {
-          filter: true,
-          sort: true,
-        }
+          filter: false,       
+          sort: false,         
+          customBodyRenderLite: (index) => {
+            return index + 1;  
+          },
+        },
       },
       {
         name: 'service_rating',

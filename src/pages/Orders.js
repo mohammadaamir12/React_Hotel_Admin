@@ -231,28 +231,15 @@ handleFilterEmployee()
 
   const columns = [
     {
-      name: 'orderid',
-      label: "Order ID",
+      name: 'serialNumber', 
+      label: 'S.No',            
       options: {
-        filter: false,
-        sort: true,
-       
-      }
-    },
-    {
-      name: 'items',
-      label: "Item Name",
-      options: {
-        filter: false,
-        sort: true,
-        customBodyRender: (value) => (
-          <ul>
-            {value.map(category => (
-              <li key={category.items}>{category.itemid}</li>
-            ))}
-          </ul>
-        )
-      }
+        filter: false,       
+        sort: false,         
+        customBodyRenderLite: (index) => {
+          return index + 1;  
+        },
+      },
     },
     {
       name: 'items',

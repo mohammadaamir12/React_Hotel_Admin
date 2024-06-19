@@ -216,12 +216,15 @@ export default function Menu() {
       
         const columns = [
           {
-            name: 'menuid',
-            label: "Menu ID",
+            name: 'serialNumber', 
+            label: 'S.No',            
             options: {
-              filter: true,
-              sort: true,
-            }
+              filter: false,       
+              sort: false,         
+              customBodyRenderLite: (index) => {
+                return index + 1;  
+              },
+            },
           },
          
           {

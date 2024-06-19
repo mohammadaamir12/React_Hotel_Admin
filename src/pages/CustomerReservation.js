@@ -200,29 +200,17 @@ export default function CustomerReservation() {
   
     const columns = [
       {
-        name: 'categoryid',
-        label: "Category ID",
+        name: 'serialNumber', 
+        label: 'S.No',            
         options: {
-          filter: true,
-          sort: true,
-        }
+          filter: false,       
+          sort: false,         
+          customBodyRenderLite: (index) => {
+            return index + 1;  
+          },
+        },
       },
-  
-      {
-        name: 'menu_items',
-        label: "Item ID",
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => (
-            <ul>
-              {value.map(category => (
-                <li key={category.item_id}>{category.item_id}</li>
-              ))}
-            </ul>
-          )
-        }
-      },
+    
       {
         name: 'menu_items',
         label: "Item Name",

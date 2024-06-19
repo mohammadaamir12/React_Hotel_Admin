@@ -163,31 +163,18 @@ const getStaffDetails=()=>{
   };
 
   const columns = [
-   
     {
-      name: 'staffid',
-      label: "Staff ID",
+      name: 'serialNumber', 
+      label: 'S.No',            
       options: {
-        filter: true,
-        sort: true,
-      }
+        filter: false,       
+        sort: false,         
+        customBodyRenderLite: (index) => {
+          return index + 1;  
+        },
+      },
     },
     
-    {
-      name: 'tables',
-      label: "Table ID",
-      options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value) => (
-          <ul>
-            {value.map(category => (
-              <li key={category.id}>{category.id}</li>
-            ))}
-          </ul>
-        )
-      }
-    },
     {
       name: 'tables',
       label: "Table Number",

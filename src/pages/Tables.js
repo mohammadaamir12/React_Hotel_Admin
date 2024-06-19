@@ -220,12 +220,15 @@ const getStaffDetails=()=>{
     
       const columns = [
         {
-          name: 'tableid',
-          label: "Table ID",
-        options: {
-          filter: true,
-          sort: true,
-        }
+          name: 'serialNumber', 
+          label: 'S.No',            
+          options: {
+            filter: false,       
+            sort: false,         
+            customBodyRenderLite: (index) => {
+              return index + 1;  
+            },
+          },
         },
         {
           name: 'tablenumber',
@@ -258,6 +261,10 @@ const getStaffDetails=()=>{
         options: {
           filter: true,
           sort: true,
+          customBodyRenderLite: (dataIndex) => {
+            const status = getData[dataIndex].status;
+            return status ? "True" : "False";
+        }
         }
         },
       ];

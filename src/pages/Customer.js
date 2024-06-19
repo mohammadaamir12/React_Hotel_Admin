@@ -120,6 +120,7 @@ const TableWrapper = styled.div`
   
   max-width: 100%;
   overflow-x: auto;
+  height: calc(100vh - 220px);
  
 `;
 
@@ -166,15 +167,36 @@ export default function Customer() {
     };
   
     const columns = [
-        {
-            name: 'customerid',
-            label: "Customer ID",
-               options: {
-               filter: true,
-                 sort: true,
-                
-               }
+      {
+        name: 'serialNumber', 
+        label: 'S.No',            
+        options: {
+          filter: false,       
+          sort: false,         
+          customBodyRenderLite: (index) => {
+            return index + 1;  
           },
+        },
+      },
+      {
+        name: 'image_path',
+        label: "Image",
+        options: {
+        filter: true,
+          sort: true,
+          customBodyRender: (value, tableMeta, updateValue) => {
+            return (
+              <img
+                src={value}
+                alt="Customer"
+                style={{ width: 50, height: 50, borderRadius: '50%' }}
+              />
+            );
+          },    
+         
+        }
+      },
+       
       {
         name: 'customer_name',
         label: "Customer Name",
@@ -217,7 +239,10 @@ export default function Customer() {
     const options = {
       filterType: 'checkbox',
       selectableRows:false,
-      rowsPerPage:4
+      rowsPerPage:4,
+      pagination: true,
+      rowsPerPageOptions: [1,2,3,4],
+     
     };
   
    
