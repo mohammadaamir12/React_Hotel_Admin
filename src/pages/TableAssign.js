@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import MUIDataTable from 'mui-datatables';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+
 
 
 const Wrapper = styled.div`
@@ -88,7 +90,7 @@ const FormGroup = styled.div`
   
 `;
 
-const FormControl = styled.input`
+const OrmControl = styled.input`
   height: 40px;
   appearance: none;
   padding: 0.5rem 1rem;
@@ -129,6 +131,8 @@ const TableWrapper = styled.div`
 export default function TableAssign() {
   const [getData,setGetData]=useState([])
   const [loading, setLoading] = useState(false);
+  const [selectedStaffId, setSelectedStaffId] = useState('');
+  const [selectedStaffTables, setSelectedStaffTables] = useState([]);
   useEffect(()=>{
  getStaffDetails();
   },[])
@@ -149,19 +153,28 @@ const getStaffDetails=()=>{
     console.log(error);
   });
 }
-  const [employees, setEmployees] = useState([
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-  ]);
+
+const handleStaffChange = (event) => {
+  const selectedId = event.target.value;
+  setSelectedStaffId(selectedId);
+  
+  const staff = getData.find((staff) => staff.staffid === selectedId);
+  if (staff) {
+    setSelectedStaffTables(staff.tables);
+  } else {
+    setSelectedStaffTables([]);
+  }
+};
   const [newEmployeeName, setNewEmployeeName] = useState('');
   const [showPopup, setShowPopup] = useState(false);
 
   const handleAddEmployee = (e) => {
     e.preventDefault();
-      setShowPopup(false); // Close the popup after adding employee
+      setShowPopup(false); 
     
   };
 
+ 
   const columns = [
     {
       name: 'serialNumber', 
@@ -174,39 +187,21 @@ const getStaffDetails=()=>{
         },
       },
     },
-    
     {
-      name: 'tables',
-      label: "Table Number",
-      options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value) => (
-          <ul>
-            {value.map(category => (
-              <li key={category.table_number}>{category.table_number}</li>
-            ))}
-          </ul>
-        )
-      }
+      name: 'table_number',
+      label: 'Table Number',
     },
-    
     {
       name: 'table_status',
-      label: "Status",
-    options: {
-      filter: true,
-      sort: true,
-     
-    }
+      label: 'Table Status',
     },
-   
-   
   ];
+ 
   const options = {
-    filterType: 'checkbox',
-    selectableRows:false,
-    rowsPerPage:2
+    filterType: 'dropdown',
+    responsive: 'standard',
+    selectableRows: 'none',
+    elevation:0,
   };
   
 return (
@@ -215,11 +210,31 @@ return (
   <BoxContainer>
     <EmployeeList>
       <TableWrapper>
-    <MUIDataTable
-      columns={columns}
-      data={getData}
-     options={options}
-  />
+     
+      <FormControl variant="outlined" style={{width:'20%'}}>
+                <InputLabel id="staff-select-label">Select Staff ID</InputLabel>
+                <Select
+                    labelId="staff-select-label"
+                    id="staff-select"
+                    value={selectedStaffId}
+                    label="Select Staff ID"
+                    onChange={handleStaffChange}
+                >
+                    {getData.map((staff) => (
+            <MenuItem key={staff.staffid} value={staff.staffid}>
+              {staff.staffid}
+            </MenuItem>
+          ))}
+                </Select>
+            </FormControl>
+
+      <MUIDataTable
+
+        data={selectedStaffTables}
+        columns={columns}
+        options={options}
+      />
+
   {loading && (
       <div
         style={{
@@ -233,7 +248,7 @@ return (
           left: '50%',
           marginTop: '-10px',
           marginLeft: '-10px',
-          animation: 'spin 1s linear infinite' /* Add spinning animation */
+          animation: 'spin 1s linear infinite' /* spinning animation */
         }}
       ></div>
     )}
@@ -256,7 +271,7 @@ return (
     <form>
       <FormGroup>
         <label>Table Catalog</label>
-        <FormControl
+        <OrmControl
           type="text"
           placeholder="eg:-Mohit"
           value={newEmployeeName}
@@ -265,23 +280,23 @@ return (
       </FormGroup>
       <FormGroup>
         <label>Table ID</label>
-        <FormControl type="text" placeholder="eg:-Mathur" />
+        <OrmControl type="text" placeholder="eg:-Mathur" />
       </FormGroup>
       
       <FormGroup>
         <label>Staff ID</label>
-        <FormControl type="text" placeholder="eg:-Housing" />
+        <OrmControl type="text" placeholder="eg:-Housing" />
       </FormGroup>
       
       <FormGroup>
         <label>Assign Time</label>
-        <FormControl type="text" placeholder="eg:-Mathur" />
+        <OrmControl type="text" placeholder="eg:-Mathur" />
       </FormGroup>
       
      
       <FormGroup>
         <label>Assign Status</label>
-        <FormControl type="text" placeholder="eg:-250" />
+        <OrmControl type="text" placeholder="eg:-250" />
       </FormGroup>
       
      

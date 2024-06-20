@@ -8,6 +8,7 @@ import PrintIcon from '@mui/icons-material/UploadFile'; // Importing the print i
 import Button from '@mui/material/Button';
 import * as XLSX from 'xlsx';
 import { Download } from '@mui/icons-material';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 const Wrapper = styled.div`
   position: relative;
@@ -95,7 +96,7 @@ const FormGroup = styled.div`
   
 `;
 
-const FormControl = styled.input`
+const OrmControl = styled.input`
   height: 40px;
   appearance: none;
   padding: 0.5rem 1rem;
@@ -145,6 +146,8 @@ export default function MenuItems() {
   const [data,setData]=useState([])
   const [file,setFile]=useState(null)
   const [loading, setLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+    const [categoryData, setCategoryData] = useState([]);
   useEffect(()=>{
  getStaffDetails();
   },[])
@@ -213,6 +216,17 @@ const getStaffDetails=()=>{
           .catch((error) => console.error(error));
       };
 
+      const handleChangeCategory = (event) => {
+        const selectedCategory = event.target.value;
+        setSelectedCategory(selectedCategory);
+       
+        const category = getData.find(cat => cat.categoryid === selectedCategory);
+        if (category) {
+            setCategoryData(category.menu_items);
+        } else {
+            setCategoryData([]);
+        }
+    };
     
     
       const columns = [
@@ -228,49 +242,14 @@ const getStaffDetails=()=>{
           },
         },
         {
-          name: 'categoryid',
-          label: "Category ID",
-          options: {
-            filter: true,
-            sort: true,
-          }
-        },
-       
-        {
-          name: 'menu_items',
-          label: "Item ID",
-          options: {
-            filter: false,
-            sort: true,
-            customBodyRender: (value) => (
-              <ul>
-                {value.map(category => (
-                  <li key={category.item_id}>{category.item_id}</li>
-                ))}
-              </ul>
-            )
-          }
-        },
-        {
-          name: 'menu_items',
+          name: "item_name",
           label: "Item Name",
-          options: {
-            filter: false,
-            sort: true,
-            customBodyRender: (value) => (
-              <ul>
-                {value.map(category => (
-                  <li key={category.item_name}>{category.item_name}</li>
-                ))}
-              </ul>
-            )
-          }
-        },
+      }
        
       ];
 
       const generateAndDownloadExcel = () => {
-        // Sample data, replace it with your actual data
+       
         const data = [
           [ 'category_id',
           'item_name',
@@ -297,11 +276,11 @@ const getStaffDetails=()=>{
       const options = {
         filterType: 'checkbox',
         selectableRows:false,
-        rowsPerPage:2,
+        rowsPerPage:4,
         elevation:0,
         // 
         pagination: true,
-    rowsPerPageOptions: [], 
+    rowsPerPageOptions: [1,2,3,4], 
    
     customToolbar: () => {
       return (
@@ -417,7 +396,7 @@ const getStaffDetails=()=>{
         });
   
         console.log('submit location');
-          setShowPopup(false); // Close the popup after adding employee
+          setShowPopup(false);
         }
         else{
           toast('Failed to Upload', {
@@ -437,10 +416,25 @@ const getStaffDetails=()=>{
       
         <EmployeeList>
         <TableWrapper>
-        
+        <FormControl variant="outlined" style={{width:'20%',marginTop:10}}>
+                <InputLabel id="category-label">Select Category</InputLabel>
+                <Select
+                    labelId="category-label"
+                    id="category-select"
+                    value={selectedCategory}
+                    label="Select Category"
+                    onChange={handleChangeCategory}
+                >
+                    {getData.map(category => (
+                        <MenuItem key={category.categoryid} value={category.categoryid}>
+                            {category.category_name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
           <MUIDataTable
             columns={columns}
-            data={getData}
+            data={categoryData}
             options={options}
             
           />
@@ -457,7 +451,7 @@ const getStaffDetails=()=>{
           left: '50%',
           marginTop: '-10px',
           marginLeft: '-10px',
-          animation: 'spin 1s linear infinite' /* Add spinning animation */
+          animation: 'spin 1s linear infinite' /*  spinning animation */
         }}
       ></div>
     )}
@@ -482,7 +476,7 @@ const getStaffDetails=()=>{
         <form>
         <FormGroup>
             <label>Category</label>
-            <FormControl
+            <OrmControl
               type="text"
               placeholder="eg:-Mohit"
               value={menuCategory}
@@ -491,7 +485,7 @@ const getStaffDetails=()=>{
           </FormGroup>
           <FormGroup>
             <label>Item Name</label>
-            <FormControl
+            <OrmControl
               type="text"
               placeholder="eg:-Mohit"
               value={menuItemName}
@@ -500,7 +494,7 @@ const getStaffDetails=()=>{
           </FormGroup>
           <FormGroup>
             <label>Item Price</label>
-            <FormControl type="text" placeholder="eg:-Mathur" 
+            <OrmControl type="text" placeholder="eg:-Mathur" 
             value={menuPrice}
             onChange={(e) => setMenuPrice(e.target.value)}
             />
@@ -508,7 +502,7 @@ const getStaffDetails=()=>{
           
           <FormGroup>
             <label>Description</label>
-            <FormControl type="text" placeholder="eg:-Housing" 
+            <OrmControl type="text" placeholder="eg:-Housing" 
             value={menuDesc}
             onChange={(e) => setMenuDesc(e.target.value)}
             />
@@ -516,14 +510,14 @@ const getStaffDetails=()=>{
           
           <FormGroup>
             <label>Availibility</label>
-            <FormControl type="text" placeholder="eg:-Mathur"
+            <OrmControl type="text" placeholder="eg:-Mathur"
             value={avail}
             onChange={(e) => setAvail(e.target.value)}
             />
           </FormGroup>
           <FormGroup>
             <label>Tax ID</label>
-            <FormControl type="text" placeholder="eg:-Mathur"
+            <OrmControl type="text" placeholder="eg:-Mathur"
             value={taxID}
             onChange={(e) => setTaxID(e.target.value)}
             />
@@ -558,7 +552,7 @@ const getStaffDetails=()=>{
                 left: '50%',
                 marginTop: '-10px',
                 marginLeft: '-10px',
-                animation: 'spin 1s linear infinite' /* Add spinning animation */
+                animation: 'spin 1s linear infinite' /* spinning animation */
             }}></div>
         )}
     <style>

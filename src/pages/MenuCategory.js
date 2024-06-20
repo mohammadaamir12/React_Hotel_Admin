@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
 import MUIDataTable from 'mui-datatables';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 
 const Wrapper = styled.div`
@@ -88,7 +89,7 @@ const FormGroup = styled.div`
   
 `;
 
-const FormControl = styled.input`
+const OrmControl = styled.input`
   height: 40px;
   appearance: none;
   padding: 0.5rem 1rem;
@@ -130,6 +131,8 @@ const TableWrapper = styled.div`
 export default function MenuCategory() {
   const [getData,setGetData]=useState([])
   const [loading, setLoading] = useState(false);
+  const [selectedMenu, setSelectedMenu] = useState('');
+  const [categories, setCategories] = useState([]);
   useEffect(()=>{
  getStaffDetails();
   },[])
@@ -165,67 +168,48 @@ const getStaffDetails=()=>{
           };
           setEmployees([...employees, newEmployee]);
           setNewEmployeeName('');
-          setShowPopup(false); // Close the popup after adding employee
+          setShowPopup(false); 
         }
       };
+
     
-      const columns = [
-        {
-          name: 'serialNumber', 
-          label: 'S.No',            
-          options: {
-            filter: false,       
-            sort: false,         
-            customBodyRenderLite: (index) => {
-              return index + 1;  
-            },
+    
+      const columns = [{
+        name: 'serialNumber', 
+        label: 'S.No',            
+        options: {
+          filter: false,       
+          sort: false,         
+          customBodyRenderLite: (index) => {
+            return index + 1;  
           },
         },
-        {
-          name: 'menuid',
-          label: "Menu ID",
-          options: {
-            filter: true,
-            sort: true,
-          }
-        },
-        {
-          name: 'categories',
-          label: "Category ID",
-          options: {
-            filter: false,
-            sort: true,
-            customBodyRender: (value) => (
-              <ul>
-                {value.map(category => (
-                  <li key={category.categoryid}>{category.categoryid}</li>
-                ))}
-              </ul>
-            )
-          }
-        },
-       
-       
-        {
-          name: 'categories',
-          label: "Categories",
-          options: {
-            filter: false,
-            sort: true,
-            customBodyRender: (value) => (
-              <ul>
-                {value.map(category => (
-                  <li key={category.categoryid}>{category.category}</li>
-                ))}
-              </ul>
-            )
-          }
-        }
-      ];
-    
+      },
+      {
+        name: "category",
+        label: "Category",
+    }];
+
       const options = {
-        filterType: 'checkbox',
-        selectableRows:false,
+          selectableRows: false, 
+          responsive: 'standard',
+          rowsPerPage:4,
+        elevation:0,
+        // 
+        pagination: true,
+    rowsPerPageOptions: [1,2,3,4], 
+      };
+  
+      const handleChangeMenu = (event) => {
+          const selectedMenuId = event.target.value;
+          setSelectedMenu(selectedMenuId);
+        
+          const menu = getData.find(menu => menu.menuid === selectedMenuId);
+          if (menu) {
+              setCategories(menu.categories.map(category => [category.categoryid, category.category])); // Format data as required by MUIDataTable
+          } else {
+              setCategories([]);
+          }
       };
    
     return (
@@ -235,9 +219,25 @@ const getStaffDetails=()=>{
           <BoxContainer>
             <EmployeeList>
               <TableWrapper>
+              <FormControl variant="outlined" style={{width:'20%',marginTop:10}}>
+              <InputLabel id="menu-label">Select Menu</InputLabel>
+                <Select
+                    labelId="menu-label"
+                    id="menu-select"
+                    value={selectedMenu}
+                    label="Select Menu"
+                    onChange={handleChangeMenu}
+                >
+                    {getData.map(menu => (
+                        <MenuItem key={menu.menuid} value={menu.menuid}>
+                            {menu.menu_name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
             <MUIDataTable
               columns={columns}
-              data={getData}
+              data={categories}
         options={options}
           />
           {loading && (
@@ -253,7 +253,7 @@ const getStaffDetails=()=>{
           left: '50%',
           marginTop: '-10px',
           marginLeft: '-10px',
-          animation: 'spin 1s linear infinite' /* Add spinning animation */
+          animation: 'spin 1s linear infinite' /* spinning animation */
         }}
       ></div>
     )}
@@ -276,7 +276,7 @@ const getStaffDetails=()=>{
             <form>
               <FormGroup>
                 <label>Category</label>
-                <FormControl
+                <OrmControl
                   type="text"
                   placeholder="eg:-Drink"
                   value={newEmployeeName}

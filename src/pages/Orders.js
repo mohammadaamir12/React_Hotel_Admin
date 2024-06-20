@@ -167,18 +167,17 @@ handleFilterEmployee()
       };
       setEmployees([...employees, newEmployee]);
       setNewEmployeeName('');
-      setShowPopup(false); // Close the popup after adding employee
+      setShowPopup(false);
     }
   };
 
   const options = {
     filterType: 'checkbox',
     selectableRows: false,
-    rowsPerPage: 2,
+    rowsPerPage: 4,
     elevation: 0,
-    // 
     pagination: true,
-    rowsPerPageOptions: [],
+    rowsPerPageOptions: [1,2,3,4],
     filter: true,
     customFilterDialogFooter: () => (
       <div onClick={() => handleFilterButtonClick()}>
@@ -223,11 +222,20 @@ handleFilterEmployee()
         setEndDate(null)
         setSecondShowPopup(false)
         setLoading(false)
+    
       })
       .catch(function (error) {
         console.log(error);
       });
   }
+
+  const orderData = data.flatMap((order) =>
+  order.items.map((item) => ({
+    itemName: item.item_name,
+    quantity: item.quantity,
+    status: item.item_status,
+  }))
+);
 
   const columns = [
     {
@@ -242,49 +250,16 @@ handleFilterEmployee()
       },
     },
     {
-      name: 'items',
-      label: "Item Name",
-      options: {
-        filter: false,
-        sort: true,
-        customBodyRender: (value) => (
-          <ul>
-            {value.map(category => (
-              <li key={category.items}>{category.item_name}</li>
-            ))}
-          </ul>
-        )
-      }
+      name: 'itemName',
+      label: 'Item Name',
     },
     {
-      name: 'items',
-      label: "Quantity",
-      options: {
-        filter: false,
-        sort: true,
-        customBodyRender: (value) => (
-          <ul>
-            {value.map(category => (
-              <li key={category.items}>{category.quantity}</li>
-            ))}
-          </ul>
-        )
-      }
+      name: 'quantity',
+      label: 'Quantity',
     },
     {
-      name: 'items',
-      label: "Status",
-      options: {
-        filter: false,
-        sort: true,
-        customBodyRender: (value) => (
-          <ul>
-            {value.map(category => (
-              <li key={category.items}>{category.item_status}</li>
-            ))}
-          </ul>
-        )
-      }
+      name: 'status',
+      label: 'Status',
     },
   ];
 
@@ -308,7 +283,7 @@ const clearDateRange = () => {
             <TableWrapper>
               <MUIDataTable
                 columns={columns}
-                data={data}
+                data={orderData}
                 options={options}
               />
                 {loading && (
@@ -324,7 +299,7 @@ const clearDateRange = () => {
           left: '50%',
           marginTop: '-10px',
           marginLeft: '-10px',
-          animation: 'spin 1s linear infinite' /* Add spinning animation */
+          animation: 'spin 1s linear infinite' /* spinning animation */
         }}
       ></div>
     )}
