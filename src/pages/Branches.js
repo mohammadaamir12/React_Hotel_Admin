@@ -15,7 +15,7 @@ const BoxContainer = styled.div`
 border: 1px solid #ccc;
   padding: 20px;
   margin-bottom: 20px;
-  width: 1050px;
+  width: 1150px;
   box-sizing: border-box;
   height: 100vh;
 

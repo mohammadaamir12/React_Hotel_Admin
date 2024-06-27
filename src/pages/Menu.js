@@ -184,21 +184,21 @@ export default function Menu() {
                           status : status
           }
         
-         axios.post('https://suycollenb.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-menus', postData,{
-              headers: {
-                "Content-Type":'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
-            },
-            mode: 'cors'
-            })
-      .then(response => {
+         axios.post('https://suycollenb.execute-api.ap-south-1.amazonaws.com/default/lambda-admin-add-menus',
+          postData,
+          {
+          headers: {
+            "Content-Type": "application/json",
+
+          },
+        }
+            ).then(response => {
           console.log('Response:', response.data);
           toast('Successfully Inserted',{
             autoClose: 500,
             hideProgressBar: true
         })
+        setShowPopup(false);
       })
       .catch(error => {
           console.error('Error:', error);
@@ -209,7 +209,7 @@ export default function Menu() {
       });
     
           console.log('submit location');
-            setShowPopup(false);
+           
         };
   
       
@@ -460,17 +460,8 @@ export default function Menu() {
       <PopupContainer show={showPopup}>
         <AuthFormContainer>
           <form>
-          <FormGroup>
-              <label>Menu ID</label>
-              <FormControl
-                type="text"
-                placeholder="eg:-Mohit"
-                value={menuId}
-                onChange={(e) => setMenuId(e.target.value)}
-              />
-            </FormGroup>
             <FormGroup>
-              <label>menu Name</label>
+              <label>Menu Name</label>
               <FormControl
                 type="text"
                 placeholder="eg:-Mohit"
